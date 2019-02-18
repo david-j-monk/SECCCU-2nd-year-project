@@ -18,8 +18,10 @@ namespace SECCCU
         {
             InitializeComponent();
             Database database = new Database();
-            Debug.WriteLineIf(database.CreateConnection(), "Connection Successful");
-            Debug.WriteLineIf(database.InitializeDatabase(), "DROP AND CREATE SUCCESS");
+            if (database.CreateConnection())
+            {
+                Debug.WriteLineIf(database.InitializeDatabase(), "Database Initialized");
+            }
 
         }
     }
