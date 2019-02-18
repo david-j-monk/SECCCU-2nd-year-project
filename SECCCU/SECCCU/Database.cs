@@ -8,18 +8,38 @@ using System.Threading.Tasks;
 
 namespace SECCCU
 {
-    class DatabaseCreation
+    class Database
     {
 
         private SqlConnection Connection;
-
-        public DatabaseCreation(SqlConnection sqlConnection)
+        
+        public bool CreateConnection()
         {
-            Connection = sqlConnection;
+            try
+            {
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+                builder.DataSource = "secccuserver.database.windows.net";
+                builder.UserID = "secccuadmin";
+                builder.Password = "SeccuPass1337$!";
+                builder.InitialCatalog = "secccusql";
+                Connection = new SqlConnection(builder.ConnectionString);
+                Connection.Open();
+                Connection.Close();
+                return true;
+            }
+            catch (SqlException e)
+            {
+                Debug.WriteLine("ERROR: " + e);
+                return false;
+            }
         }
 
-        public bool DropAndCreateTables()
+        public bool InitializeDatabase()
         {
+
+            Console.WriteLine("\nQuery data example:");
+            Console.WriteLine("=========================================\n");
+
             Debug.WriteLine("CODE: Dropping and creating database tables.");
 
             StringBuilder sb = new StringBuilder();
@@ -66,17 +86,18 @@ namespace SECCCU
                 using (SqlCommand command = new SqlCommand(Query, Connection))
                 {
                     Debug.WriteLine("CODE: Executing command");
+                    Connection.Open();
                     rowsAffected = command.ExecuteNonQuery();
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine("ERROR: " + e.ToString());
+                Debug.WriteLine("ERROR: " + e);
                 return false;
             }
             Debug.WriteLine("CODE: Command executed succesfully \n \t" + rowsAffected + " Rows Affected!");
             return true;
-            
+
         }
     }
 }
