@@ -23,6 +23,26 @@ namespace SECCCU
                 Debug.WriteLineIf(database.InitializeDatabase(), "Database Initialized");
             }
 
+
+
+            using (SqlCommand command = new SqlCommand("SELECT * FROM student;", database.Connection))
+            {
+                string stem = command.CommandText;
+                SqlDataReader reader = command.ExecuteReader();
+                reader.ToString();
+                while (reader.Read())
+                {
+
+                    Console.WriteLine(reader.GetValue(0).ToString());
+                    Console.WriteLine(reader.GetValue(1).ToString());
+                    Console.WriteLine(reader.GetValue(2).ToString());
+                    Console.WriteLine(reader.GetValue(3).ToString());
+                    Console.WriteLine(reader.GetValue(4).ToString());
+                    Console.WriteLine(reader.GetValue(5).ToString());
+                    Console.WriteLine(reader.GetValue(6).ToString());
+                }
+
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SECCCU
 {
     class Database
     {
-        private SqlConnection Connection { get; set; }
+        public SqlConnection Connection { get; set; }
         
         public bool CreateConnection()
         {
