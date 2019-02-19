@@ -46,10 +46,10 @@ namespace SECCCU
             StringBuilder sb = new StringBuilder();
 
             Debug.WriteLine("CODE: Creating query");
-            sb.Append("DROP TABLE LOG;");
+            sb.Append("DROP TABLE log;");
 
             //sb.Append("DROP TABLE STAFF;");
-            sb.Append("DROP TABLE STUDENT;");
+            sb.Append("DROP TABLE student;");
             //sb.Append("DROP TABLE LECTURE;");
             //sb.Append("DROP TABLE PROGRAMME;");
 
@@ -80,9 +80,10 @@ namespace SECCCU
 
             sb.Append("CREATE TABLE student(");
             sb.Append("row_id	        INT	            NOT NULL        IDENTITY(1,1),");
-            sb.Append("student_id	    AS CONCAT       (LOWER(SUBSTRING(first_name,1,3)), LOWER(SUBSTRING(surname,1,3)), row_id)       PRIMARY KEY,");
+            sb.Append("student_id	    VARCHAR(40)     PRIMARY KEY,");
             sb.Append("surname	        VARCHAR(40)	    NOT NULL,");
             sb.Append("first_name       VARCHAR(40)	    NOT NULL,");
+
             //sb.Append("dob			    DATE,                    ");
             //sb.Append("email		    VARCHAR(50)             ,");
             //sb.Append("phone_number	    CHAR(11)                ,");
@@ -95,9 +96,11 @@ namespace SECCCU
 
 
             sb.Append("CREATE TABLE log(");
-            sb.Append("log_id           INT	            PRIMARY KEY    IDENTITY(1,1),");
-            sb.Append("student_id	    VARCHAR(29)	    NOT NULL,");
-            sb.Append("scan_time	    DATETIME2		    NOT NULL,");
+            sb.Append("log_id           INT	            PRIMARY KEY     IDENTITY(1,1),");
+            sb.Append("student_id       VARCHAR(40)     ,");
+            sb.Append("scan_time	    DATETIME2		NOT NULL,");
+            sb.Append("CONSTRAINT       fk_student_id   FOREIGN KEY (student_id) REFERENCES student(student_id),");
+
             sb.Append(");");
 
             //string[][] rows = File.ReadAllLines("csvFiles\\programmes.csv").Select(l => l.Split(',').ToArray()).ToArray();
@@ -131,8 +134,8 @@ namespace SECCCU
             string[][] rows = File.ReadAllLines("csvFiles\\students.csv").Select(l => l.Split(',').ToArray()).ToArray();
             for (int i = 0; i < rows.GetLength(0); i++)
             {
-                sb.Append("INSERT INTO student (surname, first_name)");
-                sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}');");
+                sb.Append("INSERT INTO student (surname, first_name, student_id)");
+                sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}','{rows[i][2]}');");
             }
 
 
