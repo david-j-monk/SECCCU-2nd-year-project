@@ -22,20 +22,23 @@ namespace SECCCU
 
 
 
+
             using (SqlCommand command = new SqlCommand("SELECT * FROM student;", monitorSystem.Database.Connection))
             {
                 SqlDataReader reader = command.ExecuteReader();
                 reader.ToString();
                 while (reader.Read())
                 {
-
-                    Console.WriteLine(reader.GetValue(0).ToString());
-                    Console.WriteLine(reader.GetValue(1).ToString());
-                    Console.WriteLine(reader.GetValue(2).ToString());
-
+                    //Console.WriteLine(reader.GetValue(0).ToString());
                 }
 
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+           Reader reader = new Reader();
+           uiCardNumberLabel.Text = reader.ScanCard();
         }
     }
 }

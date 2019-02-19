@@ -80,14 +80,17 @@ namespace SECCCU
 
             sb.Append("CREATE TABLE student(");
             sb.Append("row_id	        INT	            NOT NULL        IDENTITY(1,1),");
-            sb.Append("student_id	    AS CONCAT       (first_name, surname, row_id)       PRIMARY KEY,");
+            sb.Append("student_id	    AS CONCAT       (LOWER(SUBSTRING(first_name,1,3)), LOWER(SUBSTRING(surname,1,3)), row_id)       PRIMARY KEY,");
             sb.Append("surname	        VARCHAR(40)	    NOT NULL,");
             sb.Append("first_name       VARCHAR(40)	    NOT NULL,");
             //sb.Append("dob			    DATE,                    ");
             //sb.Append("email		    VARCHAR(50)             ,");
             //sb.Append("phone_number	    CHAR(11)                ,");
             //sb.Append("programme_id	    CHAR(9)		    NOT NULL,");
+            sb.Append("CONSTRAINT       CK_first_name_Length            CHECK (LEN(first_name) >= 3),");
+            sb.Append("CONSTRAINT       CK_surname_Length               CHECK (LEN(surname) >= 3)");
             //sb.Append("	FOREIGN KEY (programme_id) REFERENCES programme(programme_id)");
+
             sb.Append(");");
 
 
