@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace SECCCU
 {
@@ -82,28 +83,29 @@ namespace SECCCU
             sb.Append("	FOREIGN KEY (programmeID) REFERENCES Programme(ProgrammeID)");
             sb.Append(")");
 
-            string[][] rows = File.ReadAllLines("programmes.csv").Select(l => l.Split(',').ToArray()).ToArray();
+            string[][] rows = File.ReadAllLines("csvFiles\\programmes.csv").Select(l => l.Split(',').ToArray()).ToArray();
+            
             for (int i = 0; i < rows.GetLength(0); i++)
             {
                 sb.Append("INSERT INTO Programme (ProgrammeID, ProgrammeName)");
                 sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}');");
             }
 
-            rows = File.ReadAllLines("staff.csv").Select(l => l.Split(',').ToArray()).ToArray();
+            rows = File.ReadAllLines("csvFiles\\staff.csv").Select(l => l.Split(',').ToArray()).ToArray();
             for (int i = 0; i < rows.GetLength(0); i++)
             {
                 sb.Append("INSERT INTO Staff (StaffID, Surname, FirstName, ProgrammeID)");
                 sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}', '{rows[i][2]}', '{rows[i][3]}');");
             }
             
-            rows = File.ReadAllLines("lectures.csv").Select(l => l.Split(',').ToArray()).ToArray();
+            rows = File.ReadAllLines("csvFiles\\lectures.csv").Select(l => l.Split(',').ToArray()).ToArray();
             for (int i = 0; i < rows.GetLength(0); i++)
             {
                 sb.Append("INSERT INTO Lecture (LectureID, LectureName, LectureStart, LectureEnd, Location, ProgrammeID)");
                 sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}', '{rows[i][2]}', '{rows[i][3]}', '{rows[i][4]}', '{rows[i][5]}');");
             }
 
-            rows = File.ReadAllLines("students.csv").Select(l => l.Split(',').ToArray()).ToArray();
+            rows = File.ReadAllLines("csvFiles\\students.csv").Select(l => l.Split(',').ToArray()).ToArray();
             for (int i = 0; i < rows.GetLength(0); i++)
             {
                 sb.Append("INSERT INTO Student (StudentID, Surname, FirstName, Dob, Email, PhoneNumber, ProgrammeID)");
