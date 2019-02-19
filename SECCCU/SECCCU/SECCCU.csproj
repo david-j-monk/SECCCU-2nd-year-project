@@ -82,7 +82,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="csvFiles\lectures.csv" />
     <None Include="packages.config" />
+    <None Include="csvFiles\programmes.csv" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -92,6 +94,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="csvFiles\staff.csv" />
+    <None Include="csvFiles\students.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

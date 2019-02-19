@@ -74,7 +74,7 @@ namespace SECCCU
             sb.Append("CREATE TABLE Student(");
             sb.Append("StudentID	CHAR(11)	    NOT NULL,");
             sb.Append("Surname	    VARCHAR(40)	    NOT NULL,");
-            sb.Append("FirstName   VARCHAR(40)	    NOT NULL,");
+            sb.Append("FirstName    VARCHAR(40)	    NOT NULL,");
             sb.Append("Dob			DATE,");
             sb.Append("Email		VARCHAR(50),");
             sb.Append("PhoneNumber	CHAR(11),");
