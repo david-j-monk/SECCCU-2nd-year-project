@@ -40,7 +40,7 @@
             this.uiScanCardButton.TabIndex = 0;
             this.uiScanCardButton.Text = "Scan Card";
             this.uiScanCardButton.UseVisualStyleBackColor = true;
-            this.uiScanCardButton.Click += new System.EventHandler(this.button1_Click);
+            this.uiScanCardButton.Click += new System.EventHandler(this.uiScanCardButton_click);
             // 
             // uiCardNumberLabel
             // 

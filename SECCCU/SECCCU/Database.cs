@@ -97,8 +97,7 @@ namespace SECCCU
             sb.Append("CREATE TABLE log(");
             sb.Append("log_id           INT	            PRIMARY KEY    IDENTITY(1,1),");
             sb.Append("student_id	    VARCHAR(29)	    NOT NULL,");
-            sb.Append("scan_time	    TIME		    NOT NULL,");
-            sb.Append("scan_date	    DATE		    NOT NULL,");
+            sb.Append("scan_time	    DATETIME2		    NOT NULL,");
             sb.Append(");");
 
             //string[][] rows = File.ReadAllLines("csvFiles\\programmes.csv").Select(l => l.Split(',').ToArray()).ToArray();
@@ -146,6 +145,7 @@ namespace SECCCU
                     Debug.WriteLine("CODE: Executing command");
                     Connection.Open();
                     rowsAffected = command.ExecuteNonQuery();
+                    Connection.Close();
                 }
                 Debug.WriteLine("CODE: Command executed successfully \n \t" + rowsAffected + " Rows Affected!");
                 return true;
