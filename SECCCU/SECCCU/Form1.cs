@@ -59,19 +59,30 @@ namespace SECCCU
                     command.ExecuteNonQuery();
 
                 }
+
+                using (SqlCommand command = new SqlCommand($"SELECT first_name, surname FROM student WHERE student_id = '{cardNumber}';", monitorSystem.Database.Connection))
+                {
+                    SqlDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        MessageBox.Show($"{dataReader.GetString(0)} {dataReader.GetString(1)}", "Swipe Success");
+                        //Console.WriteLine(reader.GetValue(0).ToString());
+                    }
+                }
             }
             catch (SqlException exception)
             {
-                switch (exception.Number)
+                switch (exception.Message)
                 {
-                    case 547:
+                    case "The INSERT statement conflicted with the FOREIGN KEY constraint \"fk_student_id\". The conflict occurred in database \"secccusql\", table \"dbo.student\", column 'student_id'.\r\nThe statement has been terminated.":
                         MessageBox.Show("Card Read Error", "Error");
                         break;
                     default:
                         throw;
-                        
+
                 }
             }
+
             monitorSystem.Database.Connection.Close();
             uiScanCardButton.Enabled = true;
 
