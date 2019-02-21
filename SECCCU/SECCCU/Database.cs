@@ -11,7 +11,7 @@ namespace SECCCU
     public class Database
     {
         public SqlConnection Connection { get; set; }
-        
+
         public bool CreateConnection()
         {
             try
@@ -161,5 +161,50 @@ namespace SECCCU
             }
 
         }
+
+        public string[] LogCardSwipe(string cardNumber)
+        {
+            string[] returnString = new string [2];
+            StringBuilder sb = new StringBuilder();
+            sb.Append("INSERT INTO log (student_id, scan_time)");
+            sb.Append($"VALUES ('{cardNumber}', '{DateTime.UtcNow:yyyy-MM-dd hh:mm:ss.fffffff}');");
+            try
+            {
+                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                {
+
+                    Debug.WriteLine("CODE: Executing command");
+                    Connection.Open();
+                    command.ExecuteNonQuery();
+
+                }
+
+                using (SqlCommand command = new SqlCommand($"SELECT first_name, surname FROM student WHERE student_id = '{cardNumber}';", Connection))
+                {
+                    SqlDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        returnString[0] = string.Format($"{dataReader.GetString(0)} {dataReader.GetString(1)}");
+                        returnString[1] = string.Format($"Swipe Success");
+                    }
+                }
+            }
+            catch (SqlException exception)
+            {
+                switch (exception.Number)
+                {
+                    case 547:
+                        returnString[0] =  String.Format("Card Read Error");
+                        returnString[1] =  String.Format("Error");
+                        break;
+                    default:
+                        throw;
+                }
+            }
+
+            Connection.Close();
+            return returnString;
+        }
+
     }
 }
