@@ -20,18 +20,18 @@ namespace SECCCU
         {
             InitializeComponent();
         }
-
+    
 
         private void uiScanCardButton_click(object sender, EventArgs e)
         {
-            uiScanCardButton.Enabled = false;
-            Reader reader = new Reader();
-            string cardNumber = reader.ScanCard();
-            uiCardNumberLabel.Text = cardNumber;
-
-            string[] infoSentToDevice = monitorSystem.Database.LogCardSwipe(cardNumber);
-            MessageBox.Show(infoSentToDevice[0], infoSentToDevice[1]);
-            uiScanCardButton.Enabled = true;
+           uiScanCardButton.Enabled = false;
+           Reader reader            = new Reader();
+           string cardNumber        = reader.ScanCard();
+           uiCardNumberLabel.Text   = cardNumber;
+      
+           string[] infoSentToDevice = monitorSystem.Database.LogCardSwipe(cardNumber);
+           MessageBox.Show(infoSentToDevice[0], infoSentToDevice[1]);
+           uiScanCardButton.Enabled = true;
         }
     }
 }

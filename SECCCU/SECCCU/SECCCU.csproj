@@ -93,6 +93,12 @@
     <Content Include="csvFiles\lectures.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="csvFiles\scanners.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="csvFiles\rooms.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <Content Include="csvFiles\programmes.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -106,7 +112,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Content Include="csvFiles\staff.csv">
+    <Content Include="csvFiles\lecturer.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="csvFiles\students.csv">
