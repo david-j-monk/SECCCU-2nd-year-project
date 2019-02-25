@@ -10,7 +10,7 @@ namespace SECCCU
 {
     public class Database
     {
-        public SqlConnection Connection { get; set; }
+        private SqlConnection Connection { get; set; }
 
         public bool CreateConnection()
         {
@@ -191,9 +191,14 @@ namespace SECCCU
             }
             catch (SqlException exception)
             {
+                
                 switch (exception.Number)
                 {
                     case 547:
+                        returnString[0] =  String.Format("Card Read Error");
+                        returnString[1] =  String.Format("Error");
+                        break;
+                    case 8152:
                         returnString[0] =  String.Format("Card Read Error");
                         returnString[1] =  String.Format("Error");
                         break;

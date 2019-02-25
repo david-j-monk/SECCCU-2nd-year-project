@@ -32,7 +32,6 @@ namespace SECCCU
             string[] infoSentToDevice = monitorSystem.Database.LogCardSwipe(cardNumber);
             MessageBox.Show(infoSentToDevice[0], infoSentToDevice[1]);
             uiScanCardButton.Enabled = true;
-
         }
     }
 }
