@@ -19,7 +19,7 @@ namespace SECCCU
         public Form1()
         {
             InitializeComponent();
-            comboBox1.DataSource = monitorSystem.Database.GetProgrammeTitles(;
+            comboBox1.DataSource = monitorSystem.Database.GetProgrammeTitles();
         }
 
 
@@ -59,6 +59,12 @@ namespace SECCCU
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string userID = uiCheckLoginTextBox.Text;
+            listBox1.Text = userID + "Test";
         }
     }
 }
