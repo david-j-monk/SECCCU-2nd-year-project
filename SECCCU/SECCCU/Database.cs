@@ -368,11 +368,11 @@ namespace SECCCU
             return returnString;
         }
 
-        public List<object> GetProgrammeTitles()
+        public List<string> GetProgrammeTitles()
         {
             List<string> programmes = new List<string>();
             StringBuilder sb = new StringBuilder();
-            sb.Append("SELECT programme_id FROM programme;");
+            sb.Append("SELECT programme_id FROM programmes;");
 
             try
             {
@@ -400,10 +400,58 @@ namespace SECCCU
                         throw;
                 }
             }
+            Connection.Close();
             return programmes;
-
-
         }
 
+        public List<string[]> GetProgrammeReport(string programmeID)
+        {
+            List<string[]> report = new List<string[]>();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, lectures.lecture_end, log.scan_time ");
+            sb.Append("FROM (((((log INNER JOIN students ON log.student_id = students.student_id) ");
+            sb.Append("INNER JOIN scanners ON log.scanner_id = scanners.scanner_id) ");
+            sb.Append("INNER JOIN lectures AS programme ON students.programme_id = programme.programme_id) ");
+            sb.Append("INNER JOIN rooms ON scanners.room_id = rooms.room_id) ");
+            sb.Append("INNER JOIN lectures ON rooms.room_id = lectures.room_id) ");
+            sb.Append($"WHERE lectures.programme_id = '{programmeID}'; ");
+
+            try
+            {
+                Connection.Open();
+                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string[] tempArray = new string[6];
+                            tempArray[0] = reader.GetString(0);
+                            tempArray[1] = reader.GetString(1);
+                            tempArray[2] = reader.GetString(2);
+                            tempArray[3] = reader.GetDateTime(3).ToString("dd-MMM-yy hh:mm");
+                            tempArray[4] = reader.GetDateTime(4).ToString("dd-MMM-yy hh:mm");
+                            tempArray[5] = reader.GetDateTime(5).ToString("dd-MMM-yy hh:mm");
+                            report.Add(tempArray);
+                        }
+                    }
+                }
+
+            }
+            catch (SqlException exception)
+            {
+
+                switch (exception.Number)
+                {
+                    case 547:
+                        break;
+                    default:
+                        throw;
+                }
+            }
+            Connection.Close();
+            return report;
+        }
     }
 }
