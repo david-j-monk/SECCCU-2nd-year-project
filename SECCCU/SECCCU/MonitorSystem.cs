@@ -14,5 +14,11 @@ namespace SECCCU
             }
         }
 
+        public string[] IsUserCurrentlySignedIn(string cardNumber)
+        {
+            return Database.DidUserSwipeInCurrentLecture(cardNumber);
+        }
+
+
     }
 }
