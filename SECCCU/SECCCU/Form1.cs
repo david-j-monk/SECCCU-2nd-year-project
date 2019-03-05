@@ -67,5 +67,10 @@ namespace SECCCU
                 listBox1.Items.Add($"{singleLog[0]}, {singleLog[1]}, {singleLog[2]}, {singleLog[3]}, {singleLog[4]}, {singleLog[5]}");
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

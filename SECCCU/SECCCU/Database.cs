@@ -110,7 +110,7 @@ namespace SECCCU
             Debug.WriteLine("CODE: CREATE TABLE lectures");
             sb.Append("CREATE TABLE lectures(");
             sb.Append("lecture_id 	    int	            IDENTITY(1,1)   PRIMARY KEY,");
-            sb.Append("lecture_name	    char(40)                ,");
+            sb.Append("lecture_name	    varchar(40)                 ,");
             sb.Append("lecture_start    datetime2		    NOT NULL,");
             sb.Append("lecture_end	    datetime2		    NOT NULL,");
             sb.Append("room_id	        int             FOREIGN KEY     REFERENCES      rooms(room_id),");
@@ -415,7 +415,9 @@ namespace SECCCU
             sb.Append("INNER JOIN lectures AS programme ON students.programme_id = programme.programme_id) ");
             sb.Append("INNER JOIN rooms ON scanners.room_id = rooms.room_id) ");
             sb.Append("INNER JOIN lectures ON rooms.room_id = lectures.room_id) ");
-            sb.Append($"WHERE lectures.programme_id = '{programmeID}'; ");
+            sb.Append($"WHERE programme.programme_id = '{programmeID}' AND ");
+            sb.Append("log.scan_time > programme.lecture_start AND ");
+            sb.Append("log.scan_time < programme.lecture_end; ");
 
             try
             {
@@ -430,9 +432,9 @@ namespace SECCCU
                             tempArray[0] = reader.GetString(0);
                             tempArray[1] = reader.GetString(1);
                             tempArray[2] = reader.GetString(2);
-                            tempArray[3] = reader.GetDateTime(3).ToString("dd-MMM-yy hh:mm");
-                            tempArray[4] = reader.GetDateTime(4).ToString("dd-MMM-yy hh:mm");
-                            tempArray[5] = reader.GetDateTime(5).ToString("dd-MMM-yy hh:mm");
+                            tempArray[3] = reader.GetDateTime(3).ToString("dd-MMM-yy HH:mm");
+                            tempArray[4] = reader.GetDateTime(4).ToString("dd-MMM-yy HH:mm");
+                            tempArray[5] = reader.GetDateTime(5).ToString("dd-MMM-yy HH:mm");
                             report.Add(tempArray);
                         }
                     }
