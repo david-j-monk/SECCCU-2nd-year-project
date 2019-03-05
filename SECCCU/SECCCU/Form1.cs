@@ -42,7 +42,7 @@ namespace SECCCU
         {
             string userID = uiCheckLoginTextBox.Text;
             string[] responseFromDatabase = monitorSystem.Database.DidUserSwipeInCurrentLecture(userID);
-            if (responseFromDatabase[2] == "")
+            if (responseFromDatabase[2] == null)
             {
                 MessageBox.Show(
                     $"{responseFromDatabase[0]} {responseFromDatabase[1]} is not marked as marked as attended");
@@ -62,9 +62,9 @@ namespace SECCCU
 
         private void button2_Click(object sender, EventArgs e)
         {
-            foreach (string[] singleLog in monitorSystem.Database.GetProgrammeReport(comboBox1.Text))
+            foreach (string singleLog in monitorSystem.Database.GetProgrammeReport(comboBox1.Text))
             {
-                listBox1.Items.Add($"{singleLog[0]}, {singleLog[1]}, {singleLog[2]}, {singleLog[3]}, {singleLog[4]}, {singleLog[5]}");
+                listBox1.Items.Add(singleLog);
             }
         }
 
