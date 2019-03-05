@@ -5,6 +5,7 @@ namespace SECCCU
     public class MonitorSystem
     {
         public Database Database { get; set; }
+        public Report Report { get; set; }
         public MonitorSystem()
         {
             Database = new Database();
@@ -13,12 +14,6 @@ namespace SECCCU
                 Debug.WriteLineIf(Database.InitializeDatabase(), "Database Initialized");
             }
         }
-
-        public string[] IsUserCurrentlySignedIn(string cardNumber)
-        {
-            return Database.DidUserSwipeInCurrentLecture(cardNumber);
-        }
-
 
     }
 }

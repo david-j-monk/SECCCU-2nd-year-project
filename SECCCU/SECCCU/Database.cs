@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
@@ -367,6 +368,42 @@ namespace SECCCU
             return returnString;
         }
 
+        public List<object> GetProgrammeTitles()
+        {
+            List<string> programmes = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT programme_id FROM programme;");
+
+            try
+            {
+                Connection.Open();
+                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            programmes.Add(reader.GetString(0));
+                        }
+                    }
+                }
+
+            }
+            catch (SqlException exception)
+            {
+
+                switch (exception.Number)
+                {
+                    case 547:
+                        break;
+                    default:
+                        throw;
+                }
+            }
+            return programmes;
+
+
+        }
 
     }
 }

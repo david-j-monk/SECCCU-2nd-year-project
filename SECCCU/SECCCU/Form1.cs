@@ -19,6 +19,7 @@ namespace SECCCU
         public Form1()
         {
             InitializeComponent();
+            comboBox1.DataSource = monitorSystem.Database.GetProgrammeTitles(;
         }
 
 
@@ -37,7 +38,7 @@ namespace SECCCU
         private void uiCheckLoginStatusButton_Click(object sender, EventArgs e)
         {
             string userID = uiCheckLoginTextBox.Text;
-            string[] responseFromDatabase = monitorSystem.IsUserCurrentlySignedIn(userID);
+            string[] responseFromDatabase = monitorSystem.Database.DidUserSwipeInCurrentLecture(userID);
             if (responseFromDatabase[2] == "")
             {
                 MessageBox.Show(
@@ -55,5 +56,9 @@ namespace SECCCU
             }
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
