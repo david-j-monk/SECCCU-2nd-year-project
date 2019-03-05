@@ -19,7 +19,10 @@ namespace SECCCU
         public Form1()
         {
             InitializeComponent();
-            comboBox1.DataSource = monitorSystem.Database.GetProgrammeTitles();
+            foreach (string programmeTitle in monitorSystem.Database.GetProgrammeTitles())
+            {
+                comboBox1.Items.Add(programmeTitle);
+            }
         }
 
 
@@ -56,15 +59,13 @@ namespace SECCCU
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-            string userID = uiCheckLoginTextBox.Text;
-            listBox1.Text = userID + "Test";
+            foreach (string[] singleLog in monitorSystem.Database.GetProgrammeReport(comboBox1.Text))
+            {
+                listBox1.Items.Add($"{singleLog[0]}, {singleLog[1]}, {singleLog[2]}, {singleLog[3]}, {singleLog[4]}, {singleLog[5]}");
+            }
         }
     }
 }
