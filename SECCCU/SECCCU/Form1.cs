@@ -21,7 +21,7 @@ namespace SECCCU
             InitializeComponent();
             foreach (string programmeTitle in monitorSystem.Database.GetProgrammeTitles())
             {
-                comboBox1.Items.Add(programmeTitle);
+                uiProgrammeComboBox.Items.Add(programmeTitle);
             }
         }
 
@@ -40,29 +40,34 @@ namespace SECCCU
 
         private void uiCheckLoginStatusButton_Click(object sender, EventArgs e)
         {
-            string userID = uiCheckLoginTextBox.Text;
-            string[] responseFromDatabase = monitorSystem.Database.DidUserSwipeInCurrentLecture(userID);
-            if (responseFromDatabase[2] == null)
+            if (uiCheckLoginTextBox.Text != "")
             {
-                MessageBox.Show(
-                    $"{responseFromDatabase[0]} {responseFromDatabase[1]} is not marked as marked as attended");
-            }
-            else if (responseFromDatabase[0] == null)
-            {
-                MessageBox.Show(
-                    $"{uiCheckLoginTextBox.Text} is not a valid student id", "Error");
-            }
-            else
-            {
-                MessageBox.Show($"{responseFromDatabase[0]} {responseFromDatabase[1]} is marked as attended in {responseFromDatabase[2]}", "Log In Status");
+                string userID = uiCheckLoginTextBox.Text.ToUpper();
+                string[] responseFromDatabase = monitorSystem.Database.DidUserSwipeInCurrentLecture(userID);
+                if (responseFromDatabase[0] == "")
+                {
+                    MessageBox.Show(
+                        $"{uiCheckLoginTextBox.Text} is not a valid student id", "Error");
+                }
+                else if (responseFromDatabase[2] == "")
+                {
+                    MessageBox.Show(
+                        $"{responseFromDatabase[0]} {responseFromDatabase[1]} is not marked as marked as attended", "Log In Status");
+                }
+                else
+                {
+                    MessageBox.Show($"{responseFromDatabase[0]} {responseFromDatabase[1]} is marked as attended in {responseFromDatabase[2]}", "Log In Status");
 
+                }
             }
+
         }
 
 
         private void button2_Click(object sender, EventArgs e)
         {
-            foreach (string singleLog in monitorSystem.Database.GetProgrammeReport(comboBox1.Text))
+            
+            foreach (string singleLog in monitorSystem.Database.GetReport(uiProgrammeComboBox.Text, uiModuleComboBox.Text, uiDateFromPicker.Value.ToString("yyyy-MM-dd"), uiDateToPicker.Value.ToString("yyyy-MM-dd")))
             {
                 listBox1.Items.Add(singleLog);
             }
@@ -71,6 +76,15 @@ namespace SECCCU
         private void button1_Click(object sender, EventArgs e)
         {
 
+        }
+
+
+        private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
+        {
+            foreach (string module in monitorSystem.Database.GetModules(uiProgrammeComboBox.Text))
+            {
+                uiModuleComboBox.Items.Add(module);
+            }
         }
     }
 }
