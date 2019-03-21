@@ -128,6 +128,7 @@ namespace SECCCU
             sb.Append("student_id	    char(12)        PRIMARY KEY,");
             sb.Append("surname	        varchar(40)	    NOT NULL,");
             sb.Append("first_name       varchar(40)	    NOT NULL,");
+            sb.Append("phone_number     varchar(13),");
             sb.Append("programme_id	    char(9)		    FOREIGN KEY     REFERENCES      programmes(programme_id),");
             sb.Append("CONSTRAINT       CK_first_name_Length            CHECK (LEN(first_name) >= 3),");
             sb.Append("CONSTRAINT       CK_surname_Length               CHECK (LEN(surname) >= 3)");
@@ -199,8 +200,8 @@ namespace SECCCU
             rows = File.ReadAllLines("csvFiles\\students.csv").Select(l => l.Split(',').ToArray()).ToArray();
             for (int i = 0; i < rows.GetLength(0); i++)
             {
-                sb.Append("INSERT INTO students (surname, first_name, student_id, programme_id )");
-                sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}','{rows[i][2]}','{rows[i][3]}' );");
+                sb.Append("INSERT INTO students (surname, first_name, student_id, programme_id, phone_number )");
+                sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}','{rows[i][2]}','{rows[i][3]}','{rows[i][4]}' );");
             }
 
             success = SendQueryToDatabase(sb.ToString());
@@ -273,7 +274,7 @@ namespace SECCCU
 
         public string[] LogCardSwipe(string cardNumber)
         {
-            string[] returnString = new string[2];
+            string[] returnString = new string[3];
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO log (student_id, scan_time, scanner_id)");
             sb.Append($"VALUES ('{cardNumber}', GETDATE(),1);");
@@ -286,13 +287,15 @@ namespace SECCCU
                     command.ExecuteNonQuery();
                 }
 
-                using (SqlCommand command = new SqlCommand($"SELECT first_name, surname  FROM students WHERE student_id = '{cardNumber}';", Connection))
+                using (SqlCommand command = new SqlCommand($"SELECT first_name, surname, phone_number  FROM students WHERE student_id = '{cardNumber}';", Connection))
                 {
                     SqlDataReader dataReader = command.ExecuteReader();
                     while (dataReader.Read())
                     {
                         returnString[0] = string.Format($"{dataReader.GetString(0)} {dataReader.GetString(1)}");
                         returnString[1] = "Swipe Success";
+                        returnString[2] = dataReader.GetString(2);
+
                     }
                 }
             }

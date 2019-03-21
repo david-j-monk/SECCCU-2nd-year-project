@@ -31,13 +31,19 @@ namespace SECCCU
 
         private void uiScanCardButton_click(object sender, EventArgs e)
         {
+            Report textReport = new Report();
             uiScanCardButton.Enabled = false;
             Reader reader = new Reader();
             string cardNumber = reader.ScanCard();
             uiCardNumberLabel.Text = cardNumber;
 
-            string[] infoSentToDevice = monitorSystem.Database.LogCardSwipe(cardNumber);
-            MessageBox.Show(infoSentToDevice[0], infoSentToDevice[1]);
+            string[] dataFromDatabase = monitorSystem.Database.LogCardSwipe(cardNumber);
+            MessageBox.Show(dataFromDatabase[0], dataFromDatabase[1]);
+            if (dataFromDatabase[2] != null)
+            {
+                textReport.SendSignInText(dataFromDatabase[2], dataFromDatabase[0]);
+            }
+
             uiScanCardButton.Enabled = true;
         }
 
