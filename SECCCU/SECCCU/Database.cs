@@ -443,7 +443,7 @@ namespace SECCCU
                     {
                         while (reader.Read())
                         {
-                            string tempString = String.Format($"{reader.GetString(0)} {reader.GetString(1)} did not attend the {reader.GetDateTime(3).ToString("dd/MMM/yy HH:mm")} {reader.GetString(2)} lecture");
+                            string tempString = String.Format($"{reader.GetString(0)} {reader.GetString(1)} \tdid not attend the {reader.GetDateTime(3).ToString("dd/MMM/yy HH:mm")} {reader.GetString(2)} lecture");
                             report.Add(tempString);
                         }
                     }

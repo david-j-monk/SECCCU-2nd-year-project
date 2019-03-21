@@ -66,7 +66,7 @@ namespace SECCCU
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            listBox1.Items.Clear();
             foreach (string singleLog in monitorSystem.Database.GetReport(uiProgrammeComboBox.Text, uiModuleComboBox.Text, uiDateFromPicker.Value.ToString("yyyy-MM-dd"), uiDateToPicker.Value.ToString("yyyy-MM-dd")))
             {
                 listBox1.Items.Add(singleLog);
@@ -81,6 +81,7 @@ namespace SECCCU
 
         private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
         {
+            uiModuleComboBox.Items.Clear();
             foreach (string module in monitorSystem.Database.GetModules(uiProgrammeComboBox.Text))
             {
                 uiModuleComboBox.Items.Add(module);
