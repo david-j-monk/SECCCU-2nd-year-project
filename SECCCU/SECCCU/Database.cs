@@ -564,7 +564,7 @@ namespace SECCCU
             List<string> modulesList = new List<string>();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(" SELECT lecture_name FROM lectures ");
+            sb.Append(" SELECT DISTINCT lecture_name FROM lectures ");
             sb.Append(" JOIN programmes ON programmes.programme_id = lectures.programme_id ");
             sb.Append(programme == "*"
                 ? $" WHERE programmes.programme_name IS NOT NULL;"

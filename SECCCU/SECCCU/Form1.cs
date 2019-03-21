@@ -24,6 +24,7 @@ namespace SECCCU
             foreach (string programmeTitle in monitorSystem.Database.GetProgrammeTitles())
             {
                 uiProgrammeComboBox.Items.Add(programmeTitle);
+                comboBox1.Items.Add(programmeTitle);
             }
         }
 
@@ -82,7 +83,9 @@ namespace SECCCU
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            string email = textBox3.Text;
+            Report report = new Report();
+            report.SendReport(email);
         }
 
 

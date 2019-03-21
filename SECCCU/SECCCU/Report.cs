@@ -8,5 +8,10 @@ namespace SECCCU
         {
 
         }
+
+        public void SendReport(string email)
+        {
+
+        }
     }
 }
