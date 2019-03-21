@@ -19,6 +19,8 @@ namespace SECCCU
         public Form1()
         {
             InitializeComponent();
+            uiProgrammeComboBox.Items.Add("*");
+
             foreach (string programmeTitle in monitorSystem.Database.GetProgrammeTitles())
             {
                 uiProgrammeComboBox.Items.Add(programmeTitle);
@@ -71,6 +73,11 @@ namespace SECCCU
             {
                 listBox1.Items.Add(singleLog);
             }
+
+            if (listBox1.Items.Count == 0)
+            {
+                listBox1.Items.Add("No classes found. Please expand search criteria");
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -82,6 +89,7 @@ namespace SECCCU
         private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
         {
             uiModuleComboBox.Items.Clear();
+            uiModuleComboBox.Items.Add("*");
             foreach (string module in monitorSystem.Database.GetModules(uiProgrammeComboBox.Text))
             {
                 uiModuleComboBox.Items.Add(module);

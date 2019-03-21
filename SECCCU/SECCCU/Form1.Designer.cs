@@ -122,7 +122,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(38, 199);
+            this.label2.Location = new System.Drawing.Point(38, 245);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 13);
             this.label2.TabIndex = 8;
@@ -141,7 +141,7 @@
             // uiProgrammeComboBox
             // 
             this.uiProgrammeComboBox.FormattingEnabled = true;
-            this.uiProgrammeComboBox.Location = new System.Drawing.Point(12, 215);
+            this.uiProgrammeComboBox.Location = new System.Drawing.Point(12, 261);
             this.uiProgrammeComboBox.Name = "uiProgrammeComboBox";
             this.uiProgrammeComboBox.Size = new System.Drawing.Size(132, 21);
             this.uiProgrammeComboBox.TabIndex = 10;
@@ -150,7 +150,7 @@
             // uiModuleComboBox
             // 
             this.uiModuleComboBox.FormattingEnabled = true;
-            this.uiModuleComboBox.Location = new System.Drawing.Point(12, 266);
+            this.uiModuleComboBox.Location = new System.Drawing.Point(12, 312);
             this.uiModuleComboBox.Name = "uiModuleComboBox";
             this.uiModuleComboBox.Size = new System.Drawing.Size(132, 21);
             this.uiModuleComboBox.TabIndex = 12;
@@ -158,7 +158,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(38, 250);
+            this.label3.Location = new System.Drawing.Point(38, 296);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 11;
@@ -166,14 +166,14 @@
             // 
             // uiDateFromPicker
             // 
-            this.uiDateFromPicker.Location = new System.Drawing.Point(13, 325);
+            this.uiDateFromPicker.Location = new System.Drawing.Point(13, 371);
             this.uiDateFromPicker.Name = "uiDateFromPicker";
             this.uiDateFromPicker.Size = new System.Drawing.Size(131, 20);
             this.uiDateFromPicker.TabIndex = 13;
             // 
             // uiDateToPicker
             // 
-            this.uiDateToPicker.Location = new System.Drawing.Point(12, 386);
+            this.uiDateToPicker.Location = new System.Drawing.Point(12, 426);
             this.uiDateToPicker.Name = "uiDateToPicker";
             this.uiDateToPicker.Size = new System.Drawing.Size(132, 20);
             this.uiDateToPicker.TabIndex = 14;
@@ -181,7 +181,7 @@
             // uiDateFromDatepicker
             // 
             this.uiDateFromDatepicker.AutoSize = true;
-            this.uiDateFromDatepicker.Location = new System.Drawing.Point(49, 309);
+            this.uiDateFromDatepicker.Location = new System.Drawing.Point(49, 355);
             this.uiDateFromDatepicker.Name = "uiDateFromDatepicker";
             this.uiDateFromDatepicker.Size = new System.Drawing.Size(56, 13);
             this.uiDateFromDatepicker.TabIndex = 15;
@@ -190,7 +190,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(49, 370);
+            this.label4.Location = new System.Drawing.Point(49, 410);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(46, 13);
             this.label4.TabIndex = 16;
