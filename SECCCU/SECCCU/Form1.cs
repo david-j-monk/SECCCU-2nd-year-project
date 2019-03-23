@@ -87,16 +87,10 @@ namespace SECCCU
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+
+        private void button1_Click_1(object sender, EventArgs e)
         {
-            string snum = uiCheckLoginTextBox.Text;
-            string output = (DateTime.Now + "");
-            string studentname = "Benjamin Smith";
-            string classnme = "Computing";
-            string module = "Comp 1";
-            listBox1.Items.Add(snum + "    -   " + studentname);
             listBox1.Items.Add("Date            Time        Class Name      Module code" );
-            listBox1.Items.Add(output + "   " + classnme + "       " + module); 
         }
     }
-}
+}                                                                       
