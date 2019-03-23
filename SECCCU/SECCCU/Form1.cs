@@ -19,22 +19,31 @@ namespace SECCCU
         public Form1()
         {
             InitializeComponent();
+            uiProgrammeComboBox.Items.Add("*");
+
             foreach (string programmeTitle in monitorSystem.Database.GetProgrammeTitles())
             {
                 uiProgrammeComboBox.Items.Add(programmeTitle);
+                comboBox1.Items.Add(programmeTitle);
             }
         }
 
 
         private void uiScanCardButton_click(object sender, EventArgs e)
         {
+            Report textReport = new Report();
             uiScanCardButton.Enabled = false;
             Reader reader = new Reader();
             string cardNumber = reader.ScanCard();
             uiCardNumberLabel.Text = cardNumber;
 
-            string[] infoSentToDevice = monitorSystem.Database.LogCardSwipe(cardNumber);
-            MessageBox.Show(infoSentToDevice[0], infoSentToDevice[1]);
+            string[] dataFromDatabase = monitorSystem.Database.LogCardSwipe(cardNumber);
+            MessageBox.Show(dataFromDatabase[0], dataFromDatabase[1]);
+            if (dataFromDatabase[2] != null)
+            {
+                textReport.SendSignInText(dataFromDatabase[2], dataFromDatabase[0]);
+            }
+
             uiScanCardButton.Enabled = true;
         }
 
@@ -66,21 +75,30 @@ namespace SECCCU
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            listBox1.Items.Clear();
             foreach (string singleLog in monitorSystem.Database.GetReport(uiProgrammeComboBox.Text, uiModuleComboBox.Text, uiDateFromPicker.Value.ToString("yyyy-MM-dd"), uiDateToPicker.Value.ToString("yyyy-MM-dd")))
             {
                 listBox1.Items.Add(singleLog);
+            }
+
+            if (listBox1.Items.Count == 0)
+            {
+                listBox1.Items.Add("No classes found. Please expand search criteria");
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            string email = textBox3.Text;
+            Report report = new Report();
+            report.SendReport(email);
         }
 
 
         private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
         {
+            uiModuleComboBox.Items.Clear();
+            uiModuleComboBox.Items.Add("*");
             foreach (string module in monitorSystem.Database.GetModules(uiProgrammeComboBox.Text))
             {
                 uiModuleComboBox.Items.Add(module);

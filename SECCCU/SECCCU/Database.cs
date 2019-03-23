@@ -128,6 +128,7 @@ namespace SECCCU
             sb.Append("student_id	    char(12)        PRIMARY KEY,");
             sb.Append("surname	        varchar(40)	    NOT NULL,");
             sb.Append("first_name       varchar(40)	    NOT NULL,");
+            sb.Append("phone_number     varchar(13),");
             sb.Append("programme_id	    char(9)		    FOREIGN KEY     REFERENCES      programmes(programme_id),");
             sb.Append("CONSTRAINT       CK_first_name_Length            CHECK (LEN(first_name) >= 3),");
             sb.Append("CONSTRAINT       CK_surname_Length               CHECK (LEN(surname) >= 3)");
@@ -199,8 +200,8 @@ namespace SECCCU
             rows = File.ReadAllLines("csvFiles\\students.csv").Select(l => l.Split(',').ToArray()).ToArray();
             for (int i = 0; i < rows.GetLength(0); i++)
             {
-                sb.Append("INSERT INTO students (surname, first_name, student_id, programme_id )");
-                sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}','{rows[i][2]}','{rows[i][3]}' );");
+                sb.Append("INSERT INTO students (surname, first_name, student_id, programme_id, phone_number )");
+                sb.Append($"VALUES ('{rows[i][0]}', '{rows[i][1]}','{rows[i][2]}','{rows[i][3]}','{rows[i][4]}' );");
             }
 
             success = SendQueryToDatabase(sb.ToString());
@@ -273,7 +274,7 @@ namespace SECCCU
 
         public string[] LogCardSwipe(string cardNumber)
         {
-            string[] returnString = new string[2];
+            string[] returnString = new string[3];
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO log (student_id, scan_time, scanner_id)");
             sb.Append($"VALUES ('{cardNumber}', GETDATE(),1);");
@@ -286,13 +287,15 @@ namespace SECCCU
                     command.ExecuteNonQuery();
                 }
 
-                using (SqlCommand command = new SqlCommand($"SELECT first_name, surname  FROM students WHERE student_id = '{cardNumber}';", Connection))
+                using (SqlCommand command = new SqlCommand($"SELECT first_name, surname, phone_number  FROM students WHERE student_id = '{cardNumber}';", Connection))
                 {
                     SqlDataReader dataReader = command.ExecuteReader();
                     while (dataReader.Read())
                     {
                         returnString[0] = string.Format($"{dataReader.GetString(0)} {dataReader.GetString(1)}");
                         returnString[1] = "Swipe Success";
+                        returnString[2] = dataReader.GetString(2);
+
                     }
                 }
             }
@@ -320,7 +323,7 @@ namespace SECCCU
 
         public string[] DidUserSwipeInCurrentLecture(string cardNumber)
         {
-            string[] returnString = new String[3]{"","",""};
+            string[] returnString = new String[3] { "", "", "" };
 
             StringBuilder sb = new StringBuilder();
             sb.Append(" SELECT students.first_name, students.surname, lectures.lecture_name FROM log ");
@@ -419,21 +422,42 @@ namespace SECCCU
 
         public List<string> GetReport(string programmeID, string module, string dateFrom, string dateTo)
         {
+            StringBuilder csvBuilder = new StringBuilder();
             List<string> report = new List<string>();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(" SELECT students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start FROM students ");
+            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name FROM students ");
             sb.Append(" JOIN log        ON students.student_id = log.student_id ");
             sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
             sb.Append(" JOIN lectures   ON programmes.programme_id = lectures.programme_id ");
             sb.Append(" JOIN rooms      ON lectures.room_id = rooms.room_id ");
             sb.Append(" JOIN scanners   ON log.scanner_id = scanners.scanner_id ");
-            sb.Append($" WHERE programmes.programme_name = '{programmeID}' AND ");
-            sb.Append($" lectures.lecture_name = '{module}' AND");
+            sb.Append(programmeID == "*"
+                ? $" WHERE programmes.programme_name IS NOT NULL AND "
+                : $" WHERE programmes.programme_name = '{programmeID}' AND ");
+            sb.Append(module == "*"
+                ? $" lectures.lecture_name IS NOT NULL AND"
+                : $" lectures.lecture_name = '{module}' AND");
             sb.Append($" lectures.lecture_start >= '{dateFrom}' AND");
-            sb.Append($" lectures.lecture_end <= '{dateTo}' AND ");
-            sb.Append(" (log.scan_time < lectures.lecture_start OR log.scan_time > lectures.lecture_end);");
-
+            sb.Append($" lectures.lecture_end <= '{dateTo} 23:59:59' AND ");
+            sb.Append(" (log.scan_time < DateADD(mi, -15, lectures.lecture_start) OR log.scan_time > DateADD(mi, +15, lectures.lecture_start))");
+            sb.Append(" EXCEPT ");
+            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name FROM log ");
+            sb.Append(" JOIN students   ON log.student_id = students.student_id ");
+            sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
+            sb.Append(" JOIN lectures   ON programmes.programme_id = lectures.programme_id ");
+            sb.Append(" JOIN rooms      ON lectures.room_id = rooms.room_id ");
+            sb.Append(" JOIN scanners   ON log.scanner_id = scanners.scanner_id ");
+            sb.Append(programmeID == "*"
+                ? $" WHERE programmes.programme_name IS NOT NULL AND "
+                : $" WHERE programmes.programme_name = '{programmeID}' AND ");
+            sb.Append(module == "*"
+                ? $" lectures.lecture_name IS NOT NULL AND"
+                : $" lectures.lecture_name = '{module}' AND");
+            sb.Append($" students.first_name LIKE '%' AND");
+            sb.Append($" lectures.lecture_start >= '{dateFrom}' AND");
+            sb.Append($" lectures.lecture_end <= '{dateTo} 23:59:59' AND");
+            sb.Append(" log.scan_time > DateADD(mi, -15, lectures.lecture_start) AND log.scan_time < DateADD(mi, +15, lectures.lecture_start);");
             try
             {
                 Connection.Open();
@@ -441,9 +465,22 @@ namespace SECCCU
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
+                        bool firstLine = true;
                         while (reader.Read())
                         {
-                            string tempString = String.Format($"{reader.GetString(0)} {reader.GetString(1)} did not attend the {reader.GetDateTime(3).ToString("dd/MMM/yy HH:mm")} {reader.GetString(2)} lecture");
+                            if (firstLine)
+                            {
+                                report.Add(String.Format($"{reader.GetString(3)} Non-Attendees"));
+                                csvBuilder.AppendLine(String.Format("Date Time,Student ID,Programme,Module,Surname,First Name,Attended?"));
+                                firstLine = false;
+
+                            }
+                            csvBuilder.AppendLine(String.Format($"{reader.GetDateTime(4).ToString("dd/MMM/yy HH:mm")},{reader.GetString(0)},{reader.GetString(5)},{reader.GetString(3)},{reader.GetString(2)},{reader.GetString(1)},No"));
+                            string tempString = String.Format($"{reader.GetDateTime(4).ToString("dd/MMM/yy HH:mm")}\t{reader.GetString(0)}\t{reader.GetString(1)} {reader.GetString(2)}");
+                            if (programmeID == "*" || module == "*")
+                            {
+                                tempString += String.Format($"\t{reader.GetString(5)}\t{reader.GetString(3)}");
+                            }
                             report.Add(tempString);
                         }
                     }
@@ -464,17 +501,22 @@ namespace SECCCU
 
 
             sb = new StringBuilder();
-            sb.Append(" SELECT students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, log.scan_time FROM log ");
+            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name FROM log ");
             sb.Append(" JOIN students   ON log.student_id = students.student_id ");
             sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
             sb.Append(" JOIN lectures   ON programmes.programme_id = lectures.programme_id ");
             sb.Append(" JOIN rooms      ON lectures.room_id = rooms.room_id ");
             sb.Append(" JOIN scanners   ON log.scanner_id = scanners.scanner_id ");
-            sb.Append($" WHERE programmes.programme_name = '{programmeID}' AND students.first_name LIKE '%' AND");
-            sb.Append($" lectures.lecture_name = '{module}' AND");
+            sb.Append(programmeID == "*"
+                ? $" WHERE programmes.programme_name IS NOT NULL AND "
+                : $" WHERE programmes.programme_name = '{programmeID}' AND ");
+            sb.Append(module == "*"
+                ? $" lectures.lecture_name IS NOT NULL AND"
+                : $" lectures.lecture_name = '{module}' AND");
             sb.Append($" lectures.lecture_start >= '{dateFrom}' AND");
-            sb.Append($" lectures.lecture_end <= '{dateTo}' AND");
-            sb.Append(" log.scan_time > lectures.lecture_start AND log.scan_time < lectures.lecture_end;");
+            sb.Append($" lectures.lecture_end <= '{dateTo} 23:59:59' AND");
+            sb.Append(" log.scan_time > DateADD(mi, -15, lectures.lecture_start) AND log.scan_time < DateADD(mi, +15, lectures.lecture_start);");
+
 
             try
             {
@@ -482,9 +524,21 @@ namespace SECCCU
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
+                        bool firstLine = true;
                         while (reader.Read())
                         {
-                            string tempString = String.Format($"{reader.GetString(0)} {reader.GetString(1)} attended the {reader.GetDateTime(3).ToString("dd/MMM/yy HH:mm")} {reader.GetString(2)} lecture at {reader.GetDateTime(4).ToString("HH:mm")}");
+                            if (firstLine)
+                            {
+                                report.Add(String.Format($"{reader.GetString(3)} Attendees"));
+                                firstLine = false;
+
+                            }
+                            csvBuilder.AppendLine(String.Format($"{reader.GetDateTime(4).ToString("dd/MMM/yy HH:mm")},{reader.GetString(0)},{reader.GetString(5)},{reader.GetString(3)},{reader.GetString(2)},{reader.GetString(1)},Yes"));
+                            string tempString = String.Format($"{reader.GetDateTime(4).ToString("dd/MMM/yy HH:mm")}\t{reader.GetString(0)}\t{reader.GetString(1)} {reader.GetString(2)}");
+                            if (programmeID == "*" || module == "*")
+                            {
+                                tempString += String.Format($"\t{reader.GetString(5)}\t{reader.GetString(3)}");
+                            }
                             report.Add(tempString);
                         }
                     }
@@ -504,7 +558,7 @@ namespace SECCCU
             }
             Connection.Close();
 
-
+            File.WriteAllText("csvFiles\\Report.csv", csvBuilder.ToString());
             return report;
         }
 
@@ -513,9 +567,11 @@ namespace SECCCU
             List<string> modulesList = new List<string>();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(" SELECT lecture_name FROM lectures ");
+            sb.Append(" SELECT DISTINCT lecture_name FROM lectures ");
             sb.Append(" JOIN programmes ON programmes.programme_id = lectures.programme_id ");
-            sb.Append($" WHERE programmes.programme_name = '{programme}';");
+            sb.Append(programme == "*"
+                ? $" WHERE programmes.programme_name IS NOT NULL;"
+                : $" WHERE programmes.programme_name = '{programme}';");
 
             try
             {
