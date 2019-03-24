@@ -6,6 +6,7 @@ using System.Net.Configuration;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Net.NetworkInformation;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -27,7 +28,7 @@ namespace SECCCU
             TwilioClient.Init(accountSid, authToken);
 
             var message = MessageResource.Create(
-                body: $"Congratulations {name}, you successfully signed in.",
+                body: $"Congratulations {name}, you successfully signed in at {DateTime.Now.ToShortTimeString()} on {DateTime.Now.ToShortDateString()}.",
                 from: new Twilio.Types.PhoneNumber("+447480535458"),
                 to: new Twilio.Types.PhoneNumber(phoneNumber)
             );
@@ -35,7 +36,7 @@ namespace SECCCU
             Console.WriteLine(message.Sid);
         }
 
-        public void SendReport(string email)
+        public bool SendReport(string email)
         {
                 try
                 { 
@@ -62,10 +63,12 @@ namespace SECCCU
                     sC.EnableSsl = true;
                     //Send an email
                     sC.Send(mM);
+                    return true;
                 }//end of try block
                 catch (Exception ex)
                 {
-    
+                    Console.WriteLine(ex);
+                    return false;
                 }//end of catch
 
             

@@ -61,7 +61,7 @@ namespace SECCCU
                 else if (responseFromDatabase[2] == "")
                 {
                     MessageBox.Show(
-                        $"{responseFromDatabase[0]} {responseFromDatabase[1]} is not marked as marked as attended", "Log In Status");
+                        $"{responseFromDatabase[0]} {responseFromDatabase[1]} is not marked as attended", "Log In Status");
                 }
                 else
                 {
@@ -73,7 +73,42 @@ namespace SECCCU
         }
 
 
-        private void button2_Click(object sender, EventArgs e)
+
+
+
+        private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
+        {
+            uiModuleComboBox.Items.Clear();
+            uiModuleComboBox.Items.Add("*");
+            foreach (string module in monitorSystem.Database.GetModules(uiProgrammeComboBox.Text))
+            {
+                uiModuleComboBox.Items.Add(module);
+            }
+        }
+
+        private void uiEmailReportButton_Click(object sender, EventArgs e)
+        {
+            string email = textBox3.Text;
+            if (RegexUtils.IsValidEmail(email))
+            {
+                Report report = new Report();
+
+                if (report.SendReport(email))
+                {
+                    MessageBox.Show("E-mail sent", "Success");
+                }
+                else
+                {
+                    MessageBox.Show("E-mail not sent", "Error");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Invalid e-mail address", "Error");
+            }
+        }
+
+        private void uiCreateReportButton_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
             foreach (string singleLog in monitorSystem.Database.GetReport(uiProgrammeComboBox.Text, uiModuleComboBox.Text, uiDateFromPicker.Value.ToString("yyyy-MM-dd"), uiDateToPicker.Value.ToString("yyyy-MM-dd")))
@@ -84,24 +119,6 @@ namespace SECCCU
             if (listBox1.Items.Count == 0)
             {
                 listBox1.Items.Add("No classes found. Please expand search criteria");
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string email = textBox3.Text;
-            Report report = new Report();
-            report.SendReport(email);
-        }
-
-
-        private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
-        {
-            uiModuleComboBox.Items.Clear();
-            uiModuleComboBox.Items.Add("*");
-            foreach (string module in monitorSystem.Database.GetModules(uiProgrammeComboBox.Text))
-            {
-                uiModuleComboBox.Items.Add(module);
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,29 +13,27 @@ namespace SECCCU
 {
     public class Database
     {
-        private SqlConnection Connection { get; set; }
+        private SQLiteConnection Connection { get; set; }
 
 
 
         public bool CreateConnection()
         {
+            var databasePath = Path.Combine("SECCCUDB.db3");
+            if (!File.Exists(databasePath))
+            {
+                SQLiteConnection.CreateFile(databasePath);
+            }
             try
             {
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder
-                {
-                    DataSource = "secccuserver.database.windows.net",
-                    UserID = "secccuadmin",
-                    Password = "SeccuPass1337$!",
-                    InitialCatalog = "secccusql"
-                };
-                Connection = new SqlConnection(builder.ConnectionString);
+                Connection = new SQLiteConnection($"data source = {databasePath}");
                 Connection.Open();
                 Connection.Close();
                 return true;
             }
-            catch (SqlException e)
+            catch (SQLiteException e)
             {
-                Debug.WriteLine("ERROR: " + e);
+                Debug.WriteLine("ERROR:" + e);
                 return false;
             }
         }
@@ -42,115 +42,110 @@ namespace SECCCU
         {
             bool success = true;
 
+
             Console.WriteLine("\nStart database initialization DEBUG:");
             Console.WriteLine("=========================================\n");
 
-
-            StringBuilder sb = new StringBuilder();
-
             Debug.WriteLine("CODE: Dropping tables");
-
-            sb.Append("DROP TABLE IF EXISTS LOG;");
-            sb.Append("DROP TABLE IF EXISTS LECTURES;");
-            sb.Append("DROP TABLE IF EXISTS LECTURERS;");
-            sb.Append("DROP TABLE IF EXISTS SCANNERS;");
-            sb.Append("DROP TABLE IF EXISTS ROOMS;");
-            sb.Append("DROP TABLE IF EXISTS STUDENTS;");
-            sb.Append("DROP TABLE IF EXISTS PROGRAMMES;");
-
-            success = SendQueryToDatabase(sb.ToString());
-            if (!success) return success;
-            sb = new StringBuilder();
-
-            Debug.WriteLine("CODE: CREATE TABLE programmes");
-            sb.Append("CREATE TABLE programmes(");
-            sb.Append("programme_id		char(9) 	    PRIMARY KEY,");
-            sb.Append("programme_name	varchar(40)	    NOT NULL");
-            sb.Append(")");
-
-            success = SendQueryToDatabase(sb.ToString());
+            string sqlCommand = @"
+            DROP TABLE IF EXISTS LOG;
+            DROP TABLE IF EXISTS LECTURES;
+            DROP TABLE IF EXISTS LECTURERS;
+            DROP TABLE IF EXISTS SCANNERS;
+            DROP TABLE IF EXISTS ROOMS;
+            DROP TABLE IF EXISTS STUDENTS;
+            DROP TABLE IF EXISTS PROGRAMMES;
+            ";
+            success = SendQueryToDatabase(sqlCommand);
             if (!success) return success;
 
-            sb = new StringBuilder();
+            Debug.WriteLine("CODE: CREATE TABLE [programmes]");
+            sqlCommand = @"CREATE TABLE programmes (
+            programme_id    char(9) 	PRIMARY KEY,
+            programme_name	varchar(40)	NOT NULL
+            )";
+
+            success = SendQueryToDatabase(sqlCommand);
+            if (!success) return success;
 
             Debug.WriteLine("CODE: CREATE TABLE lecturers");
-            sb.Append("CREATE TABLE lecturers(");
-            sb.Append("lecturer_id 	    char(12)		PRIMARY KEY,");
-            sb.Append("surname 		    varchar (40)	NOT NULL,");
-            sb.Append("first_name	    varchar (40)	NOT NULL");
-            sb.Append(")");
+            sqlCommand = @"CREATE TABLE lecturers(
+            lecturer_id 	char(12)		PRIMARY KEY,
+            surname 		varchar (40)	NOT NULL,
+            first_name	    varchar (40)	NOT NULL
+            )";
 
-            success = SendQueryToDatabase(sb.ToString());
+            success = SendQueryToDatabase(sqlCommand);
             if (!success) return success;
 
-            sb = new StringBuilder();
 
             Debug.WriteLine("CODE: CREATE TABLE rooms");
-            sb.Append("CREATE TABLE rooms(");
-            sb.Append("room_id 	        int             IDENTITY(1,1)    PRIMARY KEY,");
-            sb.Append("room_name 		varchar (5) 	UNIQUE              NOT NULL");
-            sb.Append(")");
+            sqlCommand = @"CREATE TABLE rooms(
+            room_id 	    int             IDENTITY(1,1)   PRIMARY KEY,
+            room_name 		varchar (5) 	UNIQUE NOT NULL
+            )";
 
-            success = SendQueryToDatabase(sb.ToString());
+            success = SendQueryToDatabase(sqlCommand);
             if (!success) return success;
-
-            sb = new StringBuilder();
 
             Debug.WriteLine("CODE: CREATE TABLE scanners");
-            sb.Append("CREATE TABLE scanners(");
-            sb.Append("scanner_id 	    int             IDENTITY(1,1)    PRIMARY KEY,");
-            sb.Append("room_id 		    int	            FOREIGN KEY      REFERENCES rooms(room_id)");
-            sb.Append(")");
+            sqlCommand = @"CREATE TABLE scanners(
+            scanner_id 	    int             IDENTITY(1,1)   PRIMARY KEY,
+            room_id 		int,
+            FOREIGN KEY     (room_id)       REFERENCES      rooms(room_id)
+            )";
 
-            success = SendQueryToDatabase(sb.ToString());
+            success = SendQueryToDatabase(sqlCommand);
             if (!success) return success;
 
-            sb = new StringBuilder();
 
             Debug.WriteLine("CODE: CREATE TABLE lectures");
-            sb.Append("CREATE TABLE lectures(");
-            sb.Append("lecture_id 	    int	            IDENTITY(1,1)   PRIMARY KEY,");
-            sb.Append("lecture_name	    varchar(40)                 ,");
-            sb.Append("lecture_start    datetime2		    NOT NULL,");
-            sb.Append("lecture_end	    datetime2		    NOT NULL,");
-            sb.Append("room_id	        int             FOREIGN KEY     REFERENCES      rooms(room_id),");
-            sb.Append("programme_id	    char(9)		    FOREIGN KEY     REFERENCES      programmes(programme_id),");
-            sb.Append("lecturer_id	    char(12)		FOREIGN KEY     REFERENCES      lecturers(lecturer_id)");
-            sb.Append(")");
+            sqlCommand = @"CREATE TABLE lectures(
+            lecture_id 	    int	IDENTITY(1,1) PRIMARY KEY,
+            lecture_name	varchar(40),
+            lecture_start   datetime2		NOT NULL,
+            lecture_end	    datetime2		NOT NULL,
+            room_id	        int,
+            programme_id	char(9),
+            lecturer_id	    char(12),
+            FOREIGN KEY     (room_id)       REFERENCES      rooms(room_id),
+		    FOREIGN KEY     (programme_id)  REFERENCES      programmes(programme_id),
+            FOREIGN KEY     (lecturer_id)	REFERENCES      lecturers(lecturer_id)
+            )";
 
-            success = SendQueryToDatabase(sb.ToString());
+            success = SendQueryToDatabase(sqlCommand);
             if (!success) return success;
 
-            sb = new StringBuilder();
+
 
             Debug.WriteLine("CODE: CREATE TABLE students");
-            sb.Append("CREATE TABLE students(");
-            sb.Append("student_id	    char(12)        PRIMARY KEY,");
-            sb.Append("surname	        varchar(40)	    NOT NULL,");
-            sb.Append("first_name       varchar(40)	    NOT NULL,");
-            sb.Append("phone_number     varchar(13),");
-            sb.Append("programme_id	    char(9)		    FOREIGN KEY     REFERENCES      programmes(programme_id),");
-            sb.Append("CONSTRAINT       CK_first_name_Length            CHECK (LEN(first_name) >= 3),");
-            sb.Append("CONSTRAINT       CK_surname_Length               CHECK (LEN(surname) >= 3)");
-            sb.Append(");");
+            sqlCommand = @"CREATE TABLE students(
+            student_id	    char(12)        PRIMARY KEY,
+            surname	        varchar(40)	    NOT NULL,
+            first_name      varchar(40)	    NOT NULL,
+            phone_number    varchar(13),
+            programme_id	char(9),
+            FOREIGN KEY     (programme_id)  REFERENCES      programmes(programme_id),
+            CONSTRAINT      CK_first_name_Length            CHECK           (LENGTH(first_name) >= 3),
+            CONSTRAINT      CK_surname_Length               CHECK           (LENGTH(surname) >= 3)
+            );";
 
-            success = SendQueryToDatabase(sb.ToString());
+            success = SendQueryToDatabase(sqlCommand);
             if (!success) return success;
 
-            sb = new StringBuilder();
 
             Debug.WriteLine("CODE: CREATE TABLE log");
-            sb.Append("CREATE TABLE log(");
-            sb.Append("log_id           int	            PRIMARY KEY     IDENTITY(1,1),");
-            sb.Append("student_id       char(12)        FOREIGN KEY     REFERENCES students(student_id),");
-            sb.Append("scan_time	    datetime2		NOT NULL,");
-            sb.Append("scanner_id	    int		        FOREIGN KEY     REFERENCES scanners(scanner_id)");
-            sb.Append(");");
+            sqlCommand = @"CREATE TABLE log(
+            student_id      char(12),
+            scan_time	    datetime		NOT NULL,
+            scanner_id	    int,
+            FOREIGN KEY     (scanner_id)    REFERENCES      scanners(scanner_id),
+            FOREIGN KEY     (student_id)    REFERENCES      students(student_id)
+            );";
 
-            success = SendQueryToDatabase(sb.ToString());
+            success = SendQueryToDatabase(sqlCommand);
             if (!success) return success;
-
-            sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             //Programmes to DB
             Debug.WriteLine("CODE: Programmes to DB");
@@ -233,19 +228,19 @@ namespace SECCCU
             }
 
             success = SendQueryToDatabase(sb.ToString());
-            if (!success) return success;
-            sb = new StringBuilder();
 
-            //Students to DB
-            Debug.WriteLine("CODE: Students to DB");
-            rows = File.ReadAllLines("csvFiles\\students.csv").Select(l => l.Split(',').ToArray()).ToArray();
-            for (int i = 0; i < rows.GetLength(0); i++)
-            {
-                sb.Append("INSERT INTO log (student_id, scan_time, scanner_id )");
-                sb.Append($"VALUES ('{rows[i][2]}', CONVERT(datetime2, '1970-01-01'), 1); ");
-            }
-            success = SendQueryToDatabase(sb.ToString());
+            //if (!success) return success;
+            //sb = new StringBuilder();
 
+            ////Students to DB
+            //Debug.WriteLine("CODE: Students to DB");
+            //rows = File.ReadAllLines("csvFiles\\students.csv").Select(l => l.Split(',').ToArray()).ToArray();
+            //for (int i = 0; i < rows.GetLength(0); i++)
+            //{
+            //    sb.Append("INSERT INTO log (student_id, scan_time, scanner_id )");
+            //    sb.Append($"VALUES ('{rows[i][2]}', '1970-01-01', 1); ");
+            //}
+            //success = SendQueryToDatabase(sb.ToString());
 
             return success;
         }
@@ -255,13 +250,15 @@ namespace SECCCU
             try
             {
                 int rowsAffected;
-                using (SqlCommand command = new SqlCommand(query, Connection))
+
+                using (SQLiteCommand sqLiteCommand = new SQLiteCommand(query, Connection))
                 {
                     Connection.Open();
-                    rowsAffected = command.ExecuteNonQuery();
+                    rowsAffected = sqLiteCommand.ExecuteNonQuery();
                     Connection.Close();
                 }
-                Debug.WriteLine("CODE: Command executed successfully \n \t" + rowsAffected + " Rows Affected!");
+
+                Debug.WriteLine("CODE: Command executed successfully \n \t" + rowsAffected + " " + "Rows Affected!");
                 return true;
             }
             catch (Exception e)
@@ -277,19 +274,19 @@ namespace SECCCU
             string[] returnString = new string[3];
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO log (student_id, scan_time, scanner_id)");
-            sb.Append($"VALUES ('{cardNumber}', GETDATE(),1);");
+            sb.Append($"VALUES ('{cardNumber}', datetime('now'),1);");
             try
             {
-                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                using (SQLiteCommand command = new SQLiteCommand(sb.ToString(), Connection))
                 {
                     Debug.WriteLine("CODE: Executing command");
                     Connection.Open();
                     command.ExecuteNonQuery();
                 }
 
-                using (SqlCommand command = new SqlCommand($"SELECT first_name, surname, phone_number  FROM students WHERE student_id = '{cardNumber}';", Connection))
+                using (SQLiteCommand command = new SQLiteCommand($"SELECT first_name, surname, phone_number FROM students WHERE student_id = '{cardNumber}';", Connection))
                 {
-                    SqlDataReader dataReader = command.ExecuteReader();
+                    SQLiteDataReader dataReader = command.ExecuteReader();
                     while (dataReader.Read())
                     {
                         returnString[0] = string.Format($"{dataReader.GetString(0)} {dataReader.GetString(1)}");
@@ -299,22 +296,11 @@ namespace SECCCU
                     }
                 }
             }
-            catch (SqlException exception)
+            catch (SQLiteException exception)
             {
-
-                switch (exception.Number)
-                {
-                    case 547:
-                        returnString[0] = "Card Read Error";
-                        returnString[1] = "Error";
-                        break;
-                    case 8152:
-                        returnString[0] = "Card Read Error";
-                        returnString[1] = "Error";
-                        break;
-                    default:
-                        throw;
-                }
+                returnString[0] = "Card Read Error";
+                returnString[1] = "Error";
+                Console.WriteLine(exception);
             }
 
             Connection.Close();
@@ -325,24 +311,25 @@ namespace SECCCU
         {
             string[] returnString = new String[3] { "", "", "" };
 
-            StringBuilder sb = new StringBuilder();
-            sb.Append(" SELECT students.first_name, students.surname, lectures.lecture_name FROM log ");
-            sb.Append(" JOIN students ON log.student_id = students.student_id ");
-            sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
-            sb.Append(" JOIN lectures ON programmes.programme_id = lectures.programme_id ");
-            sb.Append(" JOIN rooms ON lectures.room_id = rooms.room_id ");
-            sb.Append(" JOIN scanners ON log.scanner_id = scanners.scanner_id ");
-            sb.Append($"WHERE log.student_id = '{cardNumber}' ");
-            sb.Append("AND scan_time > DATEADD(minute, -15, lecture_start) ");
-            sb.Append("AND scan_time < lecture_end ");
-            sb.Append("AND GETDATE() > DATEADD(minute, -15, lecture_start) ");
-            sb.Append("AND GETDATE() < lecture_end; ");
+
+            string sqlCommand = $@" SELECT students.first_name, students.surname, lectures.lecture_name 
+            FROM log, students, programmes, lectures, scanners, rooms
+            WHERE   log.student_id = students.student_id
+            AND     students.programme_id = programmes.programme_id
+            AND     programmes.programme_id = lectures.programme_id
+            AND     lectures.room_id = rooms.room_id
+            AND     log.scanner_id = scanners.scanner_id
+            AND     log.student_id = '{cardNumber}'
+            AND     scan_time > datetime(lecture_start, '-15 minutes')
+            AND     scan_time < lecture_end
+            AND     datetime('now') > datetime(lecture_start, '-15 minutes')
+            AND     datetime('now') < lecture_end; ";
             try
             {
                 Connection.Open();
-                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                using (SQLiteCommand command = new SQLiteCommand(sqlCommand, Connection))
                 {
-                    SqlDataReader dataReader = command.ExecuteReader();
+                    SQLiteDataReader dataReader = command.ExecuteReader();
                     if (dataReader.Read())
                     {
                         returnString[0] = dataReader.GetString(0);
@@ -353,12 +340,12 @@ namespace SECCCU
                     {
                         Connection.Close();
                         Connection.Open();
-                        using (SqlCommand getNameCommand =
-                            new SqlCommand(
-                                $"SELECT first_name, surname FROM students WHERE student_id = '{cardNumber}';",
-                                Connection))
+                        using (SQLiteCommand getNameCommand =
+                        new SQLiteCommand(
+                        $"SELECT first_name, surname FROM students WHERE student_id = '{cardNumber}';",
+                        Connection))
                         {
-                            SqlDataReader dataReader2 = getNameCommand.ExecuteReader();
+                            SQLiteDataReader dataReader2 = getNameCommand.ExecuteReader();
                             if (dataReader2.Read())
                             {
                                 returnString[0] = dataReader2.GetString(0);
@@ -368,16 +355,10 @@ namespace SECCCU
                     }
                 }
             }
-            catch (SqlException exception)
+            catch (SQLiteException exception)
             {
 
-                switch (exception.Number)
-                {
-                    case 547:
-                        break;
-                    default:
-                        throw;
-                }
+                Console.WriteLine(exception);
             }
 
             Connection.Close();
@@ -387,15 +368,14 @@ namespace SECCCU
         public List<string> GetProgrammeTitles()
         {
             List<string> programmes = new List<string>();
-            StringBuilder sb = new StringBuilder();
-            sb.Append("SELECT programme_name FROM programmes;");
+            string sqlCommand = "SELECT programme_name FROM programmes;";
 
             try
             {
                 Connection.Open();
-                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                using (SQLiteCommand command = new SQLiteCommand(sqlCommand, Connection))
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -405,16 +385,10 @@ namespace SECCCU
                 }
 
             }
-            catch (SqlException exception)
+            catch (SQLiteException exception)
             {
 
-                switch (exception.Number)
-                {
-                    case 547:
-                        break;
-                    default:
-                        throw;
-                }
+                Console.WriteLine(exception);
             }
             Connection.Close();
             return programmes;
@@ -422,55 +396,55 @@ namespace SECCCU
 
         public List<string> GetReport(string programmeID, string module, string dateFrom, string dateTo)
         {
+            StringBuilder sb = new StringBuilder();
             StringBuilder csvBuilder = new StringBuilder();
             List<string> report = new List<string>();
+            sb.Append("SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name");
+            sb.Append(" FROM students, scanners, programmes, lectures, rooms");
+            sb.Append(" WHERE students.programme_id = programmes.programme_id  ");
+            sb.Append(" AND programmes.programme_id = lectures.programme_id  ");
+            sb.Append(programmeID == "*"
+                ? $" AND programmes.programme_name IS NOT NULL "
+                : $" AND programmes.programme_name = '{programmeID}' ");
+            sb.Append(module == "*"
+                ? $" AND lectures.lecture_name IS NOT NULL "
+                : $" AND lectures.lecture_name = '{module}' ");
+            sb.Append($" AND lectures.lecture_start >= '{dateFrom}' ");
+            sb.Append($" AND lectures.lecture_end <= '{dateTo} 23:59:59' ");
+            sb.Append(" EXCEPT  ");
+            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name ");
+            sb.Append(" FROM students, log, scanners, programmes, lectures, rooms");
+            sb.Append(" WHERE ");
+            sb.Append(" students.student_id = log.student_id");
+            sb.Append(" AND log.scanner_id = scanners.scanner_id");
+            sb.Append(" AND students.programme_id = programmes.programme_id");
+            sb.Append(" AND programmes.programme_id = lectures.programme_id  ");
+            sb.Append(" AND lectures.room_id = rooms.room_id  ");
+            sb.Append(programmeID == "*"
+                ? $" AND programmes.programme_name IS NOT NULL "
+                : $" AND programmes.programme_name = '{programmeID}' ");
+            sb.Append(module == "*"
+                ? $" AND lectures.lecture_name IS NOT NULL "
+                : $" AND lectures.lecture_name = '{module}' ");
+            sb.Append($" AND lectures.lecture_start >= '{dateFrom}' ");
+            sb.Append($" AND lectures.lecture_end <= '{dateTo} 23:59:59' ");
+            sb.Append(" AND log.scan_time > datetime(lectures.lecture_start, '-15 minutes') ");
+            sb.Append(" AND log.scan_time < datetime(lectures.lecture_start, '+15 minutes');");
 
-            StringBuilder sb = new StringBuilder();
-            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name FROM students ");
-            sb.Append(" JOIN log        ON students.student_id = log.student_id ");
-            sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
-            sb.Append(" JOIN lectures   ON programmes.programme_id = lectures.programme_id ");
-            sb.Append(" JOIN rooms      ON lectures.room_id = rooms.room_id ");
-            sb.Append(" JOIN scanners   ON log.scanner_id = scanners.scanner_id ");
-            sb.Append(programmeID == "*"
-                ? $" WHERE programmes.programme_name IS NOT NULL AND "
-                : $" WHERE programmes.programme_name = '{programmeID}' AND ");
-            sb.Append(module == "*"
-                ? $" lectures.lecture_name IS NOT NULL AND"
-                : $" lectures.lecture_name = '{module}' AND");
-            sb.Append($" lectures.lecture_start >= '{dateFrom}' AND");
-            sb.Append($" lectures.lecture_end <= '{dateTo} 23:59:59' AND ");
-            sb.Append(" (log.scan_time < DateADD(mi, -15, lectures.lecture_start) OR log.scan_time > DateADD(mi, +15, lectures.lecture_start))");
-            sb.Append(" EXCEPT ");
-            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name FROM log ");
-            sb.Append(" JOIN students   ON log.student_id = students.student_id ");
-            sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
-            sb.Append(" JOIN lectures   ON programmes.programme_id = lectures.programme_id ");
-            sb.Append(" JOIN rooms      ON lectures.room_id = rooms.room_id ");
-            sb.Append(" JOIN scanners   ON log.scanner_id = scanners.scanner_id ");
-            sb.Append(programmeID == "*"
-                ? $" WHERE programmes.programme_name IS NOT NULL AND "
-                : $" WHERE programmes.programme_name = '{programmeID}' AND ");
-            sb.Append(module == "*"
-                ? $" lectures.lecture_name IS NOT NULL AND"
-                : $" lectures.lecture_name = '{module}' AND");
-            sb.Append($" students.first_name LIKE '%' AND");
-            sb.Append($" lectures.lecture_start >= '{dateFrom}' AND");
-            sb.Append($" lectures.lecture_end <= '{dateTo} 23:59:59' AND");
-            sb.Append(" log.scan_time > DateADD(mi, -15, lectures.lecture_start) AND log.scan_time < DateADD(mi, +15, lectures.lecture_start);");
+
             try
             {
                 Connection.Open();
-                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                using (SQLiteCommand command = new SQLiteCommand(sb.ToString(), Connection))
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         bool firstLine = true;
                         while (reader.Read())
                         {
                             if (firstLine)
                             {
-                                report.Add(String.Format($"{reader.GetString(3)} Non-Attendees"));
+                                report.Add(String.Format("Non-Attendees"));
                                 csvBuilder.AppendLine(String.Format("Date Time,Student ID,Programme,Module,Surname,First Name,Attended?"));
                                 firstLine = false;
 
@@ -487,42 +461,54 @@ namespace SECCCU
                 }
 
             }
-            catch (SqlException exception)
+            catch (SQLiteException exception)
             {
 
-                switch (exception.Number)
-                {
-                    case 547:
-                        break;
-                    default:
-                        throw;
-                }
+
+                Console.WriteLine(exception);
             }
 
 
             sb = new StringBuilder();
-            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name FROM log ");
-            sb.Append(" JOIN students   ON log.student_id = students.student_id ");
-            sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
-            sb.Append(" JOIN lectures   ON programmes.programme_id = lectures.programme_id ");
-            sb.Append(" JOIN rooms      ON lectures.room_id = rooms.room_id ");
-            sb.Append(" JOIN scanners   ON log.scanner_id = scanners.scanner_id ");
+            //sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name FROM log ");
+            //sb.Append(" JOIN students   ON log.student_id = students.student_id ");
+            //sb.Append(" JOIN programmes ON students.programme_id = programmes.programme_id ");
+            //sb.Append(" JOIN lectures   ON programmes.programme_id = lectures.programme_id ");
+            //sb.Append(" JOIN rooms      ON lectures.room_id = rooms.room_id ");
+            //sb.Append(" JOIN scanners ON log.scanner_id = scanners.scanner_id ");
+            //sb.Append(programmeID == "*"
+            //? $" WHERE programmes.programme_name IS NOT NULL AND "
+            //: $" WHERE programmes.programme_name = '{programmeID}' AND ");
+            //sb.Append(module == "*"
+            //? $" lectures.lecture_name IS NOT NULL AND"
+            //: $" lectures.lecture_name = '{module}' AND");
+            //sb.Append($" lectures.lecture_start >= '{dateFrom}' AND");
+            //sb.Append($" lectures.lecture_end <= '{dateTo} 23:59:59' AND");
+            //sb.Append(" log.scan_time > datetime(lectures.lecture_start, '-15 minutes') AND log.scan_time < datetime(lectures.lecture_start, '+15 minutes');");
+            sb.Append(" SELECT students.student_id, students.first_name, students.surname, lectures.lecture_name, lectures.lecture_start, programmes.programme_name ");
+            sb.Append(" FROM students, log, scanners, programmes, lectures, rooms");
+            sb.Append(" WHERE ");
+            sb.Append(" students.student_id = log.student_id");
+            sb.Append(" AND log.scanner_id = scanners.scanner_id");
+            sb.Append(" AND students.programme_id = programmes.programme_id");
+            sb.Append(" AND programmes.programme_id = lectures.programme_id  ");
+            sb.Append(" AND lectures.room_id = rooms.room_id  ");
             sb.Append(programmeID == "*"
-                ? $" WHERE programmes.programme_name IS NOT NULL AND "
-                : $" WHERE programmes.programme_name = '{programmeID}' AND ");
+                ? $" AND programmes.programme_name IS NOT NULL "
+                : $" AND programmes.programme_name = '{programmeID}' ");
             sb.Append(module == "*"
-                ? $" lectures.lecture_name IS NOT NULL AND"
-                : $" lectures.lecture_name = '{module}' AND");
-            sb.Append($" lectures.lecture_start >= '{dateFrom}' AND");
-            sb.Append($" lectures.lecture_end <= '{dateTo} 23:59:59' AND");
-            sb.Append(" log.scan_time > DateADD(mi, -15, lectures.lecture_start) AND log.scan_time < DateADD(mi, +15, lectures.lecture_start);");
-
+                ? $" AND lectures.lecture_name IS NOT NULL "
+                : $" AND lectures.lecture_name = '{module}' ");
+            sb.Append($" AND lectures.lecture_start >= '{dateFrom}' ");
+            sb.Append($" AND lectures.lecture_end <= '{dateTo} 23:59:59' ");
+            sb.Append(" AND log.scan_time > datetime(lectures.lecture_start, '-15 minutes') ");
+            sb.Append(" AND log.scan_time < datetime(lectures.lecture_start, '+15 minutes');");
 
             try
             {
-                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                using (SQLiteCommand command = new SQLiteCommand(sb.ToString(), Connection))
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         bool firstLine = true;
                         while (reader.Read())
@@ -545,16 +531,10 @@ namespace SECCCU
                 }
 
             }
-            catch (SqlException exception)
+            catch (SQLiteException exception)
             {
 
-                switch (exception.Number)
-                {
-                    case 547:
-                        break;
-                    default:
-                        throw;
-                }
+                Console.WriteLine(exception);
             }
             Connection.Close();
 
@@ -570,15 +550,15 @@ namespace SECCCU
             sb.Append(" SELECT DISTINCT lecture_name FROM lectures ");
             sb.Append(" JOIN programmes ON programmes.programme_id = lectures.programme_id ");
             sb.Append(programme == "*"
-                ? $" WHERE programmes.programme_name IS NOT NULL;"
-                : $" WHERE programmes.programme_name = '{programme}';");
+            ? $" WHERE programmes.programme_name IS NOT NULL;"
+            : $" WHERE programmes.programme_name = '{programme}';");
 
             try
             {
                 Connection.Open();
-                using (SqlCommand command = new SqlCommand(sb.ToString(), Connection))
+                using (SQLiteCommand command = new SQLiteCommand(sb.ToString(), Connection))
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -589,16 +569,10 @@ namespace SECCCU
                 }
 
             }
-            catch (SqlException exception)
+            catch (SQLiteException exception)
             {
 
-                switch (exception.Number)
-                {
-                    case 547:
-                        break;
-                    default:
-                        throw;
-                }
+                Console.WriteLine(exception);
             }
             Connection.Close();
 

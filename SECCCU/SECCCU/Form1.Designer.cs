@@ -37,7 +37,7 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.uiCreateReportButton = new System.Windows.Forms.Button();
             this.uiProgrammeComboBox = new System.Windows.Forms.ComboBox();
             this.uiModuleComboBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -52,8 +52,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.uiAddStudentButton = new System.Windows.Forms.Button();
+            this.uiEmailReportButton = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
@@ -128,7 +128,6 @@
             this.button1.TabIndex = 6;
             this.button1.Text = "Get full report for student";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label2
             // 
@@ -139,15 +138,15 @@
             this.label2.TabIndex = 8;
             this.label2.Text = "Programme";
             // 
-            // button2
+            // uiCreateReportButton
             // 
-            this.button2.Location = new System.Drawing.Point(12, 452);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(132, 52);
-            this.button2.TabIndex = 9;
-            this.button2.Text = "Create attendance report";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.uiCreateReportButton.Location = new System.Drawing.Point(12, 452);
+            this.uiCreateReportButton.Name = "uiCreateReportButton";
+            this.uiCreateReportButton.Size = new System.Drawing.Size(132, 52);
+            this.uiCreateReportButton.TabIndex = 9;
+            this.uiCreateReportButton.Text = "Create attendance report";
+            this.uiCreateReportButton.UseVisualStyleBackColor = true;
+            this.uiCreateReportButton.Click += new System.EventHandler(this.uiCreateReportButton_Click);
             // 
             // uiProgrammeComboBox
             // 
@@ -266,25 +265,24 @@
             this.label8.TabIndex = 4;
             this.label8.Text = "Surname";
             // 
-            // button3
+            // uiAddStudentButton
             // 
-            this.button3.Location = new System.Drawing.Point(930, 202);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(132, 35);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Add student";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button1_Click);
+            this.uiAddStudentButton.Location = new System.Drawing.Point(930, 202);
+            this.uiAddStudentButton.Name = "uiAddStudentButton";
+            this.uiAddStudentButton.Size = new System.Drawing.Size(132, 35);
+            this.uiAddStudentButton.TabIndex = 6;
+            this.uiAddStudentButton.Text = "Add student";
+            this.uiAddStudentButton.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // uiEmailReportButton
             // 
-            this.button4.Location = new System.Drawing.Point(930, 467);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(132, 35);
-            this.button4.TabIndex = 6;
-            this.button4.Text = "Send report";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button1_Click);
+            this.uiEmailReportButton.Location = new System.Drawing.Point(930, 467);
+            this.uiEmailReportButton.Name = "uiEmailReportButton";
+            this.uiEmailReportButton.Size = new System.Drawing.Size(132, 35);
+            this.uiEmailReportButton.TabIndex = 6;
+            this.uiEmailReportButton.Text = "Send report";
+            this.uiEmailReportButton.UseVisualStyleBackColor = true;
+            this.uiEmailReportButton.Click += new System.EventHandler(this.uiEmailReportButton_Click);
             // 
             // textBox3
             // 
@@ -315,12 +313,12 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.uiProgrammeComboBox);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.uiCreateReportButton);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.uiEmailReportButton);
+            this.Controls.Add(this.uiAddStudentButton);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label7);
@@ -353,7 +351,7 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button uiCreateReportButton;
         private System.Windows.Forms.ComboBox uiProgrammeComboBox;
         private System.Windows.Forms.ComboBox uiModuleComboBox;
         private System.Windows.Forms.Label label3;
@@ -368,8 +366,8 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button uiAddStudentButton;
+        private System.Windows.Forms.Button uiEmailReportButton;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label9;
     }

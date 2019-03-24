@@ -11,9 +11,8 @@ namespace SECCCU
             Database = new Database();
             if (Database.CreateConnection())
             {
-                Debug.WriteLineIf(Database.InitializeDatabase(), "Database Initialized");
+                Debug.WriteLineIf(Database.InitializeDatabase(), "Database Initialized" );
             }
         }
-
     }
 }
