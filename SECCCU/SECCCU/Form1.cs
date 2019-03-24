@@ -129,7 +129,7 @@ namespace SECCCU
         {
 
             if (uiFirstNameTextBox.Text.Length > 2 && uiSurnameTextBox.Text.Length > 2 &&
-                RegexUtils.ValidatePhoneNumber(uiPhoneNumberTextBox.Text) && uiProgrammePicker.Text != "")
+                RegexUtils.ValidatePhoneNumber(uiPhoneNumberTextBox.Text) && uiProgrammePicker.Text != "" )
             {
                 string studentID = monitorSystem.Database.AddStudent(uiFirstNameTextBox.Text, uiSurnameTextBox.Text,
                     uiPhoneNumberTextBox.Text,
@@ -139,6 +139,11 @@ namespace SECCCU
                 if (studentID != "False")
                 {
                     MessageBox.Show($"Student Added\nID Number: {studentID} ", "Success");
+                    uiFirstNameTextBox.Clear();
+                    uiSurnameTextBox.Clear();
+                    uiPhoneNumberTextBox.Clear();
+                    uiProgrammePicker.SelectedIndex = -1;
+                    
                 }
                 else
                 {

@@ -34,6 +34,7 @@
             this.uiStudentIDTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.uiAttendanceAvgLabel = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.uiCreateReportButton = new System.Windows.Forms.Button();
@@ -57,7 +58,6 @@
             this.label9 = new System.Windows.Forms.Label();
             this.uiPhoneNumberTextBox = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.uiAttendanceAvgLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -117,6 +117,15 @@
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             // 
+            // uiAttendanceAvgLabel
+            // 
+            this.uiAttendanceAvgLabel.AutoSize = true;
+            this.uiAttendanceAvgLabel.Font = new System.Drawing.Font("MS Reference Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiAttendanceAvgLabel.Location = new System.Drawing.Point(141, 455);
+            this.uiAttendanceAvgLabel.Name = "uiAttendanceAvgLabel";
+            this.uiAttendanceAvgLabel.Size = new System.Drawing.Size(0, 26);
+            this.uiAttendanceAvgLabel.TabIndex = 1;
+            // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
@@ -146,6 +155,7 @@
             // 
             // uiProgrammeComboBox
             // 
+            this.uiProgrammeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.uiProgrammeComboBox.FormattingEnabled = true;
             this.uiProgrammeComboBox.Location = new System.Drawing.Point(12, 261);
             this.uiProgrammeComboBox.Name = "uiProgrammeComboBox";
@@ -155,6 +165,7 @@
             // 
             // uiModuleComboBox
             // 
+            this.uiModuleComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.uiModuleComboBox.FormattingEnabled = true;
             this.uiModuleComboBox.Location = new System.Drawing.Point(12, 312);
             this.uiModuleComboBox.Name = "uiModuleComboBox";
@@ -213,6 +224,7 @@
             // 
             // uiProgrammePicker
             // 
+            this.uiProgrammePicker.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.uiProgrammePicker.FormattingEnabled = true;
             this.uiProgrammePicker.Location = new System.Drawing.Point(930, 197);
             this.uiProgrammePicker.Name = "uiProgrammePicker";
@@ -314,15 +326,6 @@
             this.label10.Size = new System.Drawing.Size(78, 13);
             this.label10.TabIndex = 4;
             this.label10.Text = "Phone Number";
-            // 
-            // uiAttendanceAvgLabel
-            // 
-            this.uiAttendanceAvgLabel.AutoSize = true;
-            this.uiAttendanceAvgLabel.Font = new System.Drawing.Font("MS Reference Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiAttendanceAvgLabel.Location = new System.Drawing.Point(141, 455);
-            this.uiAttendanceAvgLabel.Name = "uiAttendanceAvgLabel";
-            this.uiAttendanceAvgLabel.Size = new System.Drawing.Size(0, 26);
-            this.uiAttendanceAvgLabel.TabIndex = 1;
             // 
             // Form1
             // 
