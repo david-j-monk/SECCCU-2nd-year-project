@@ -49,14 +49,14 @@ namespace SECCCU
 
         private void uiCheckLoginStatusButton_Click(object sender, EventArgs e)
         {
-            if (uiCheckLoginTextBox.Text != "")
+            if (uiStudentIDTextBox.Text != "")
             {
-                string userID = uiCheckLoginTextBox.Text.ToUpper();
+                string userID = uiStudentIDTextBox.Text.ToUpper();
                 string[] responseFromDatabase = monitorSystem.Database.DidUserSwipeInCurrentLecture(userID);
                 if (responseFromDatabase[0] == "")
                 {
                     MessageBox.Show(
-                        $"{uiCheckLoginTextBox.Text} is not a valid student id", "Error");
+                        $"{uiStudentIDTextBox.Text} is not a valid student id", "Error");
                 }
                 else if (responseFromDatabase[2] == "")
                 {
@@ -69,13 +69,8 @@ namespace SECCCU
 
                 }
             }
-
         }
-
-
-
-
-
+        
         private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
         {
             uiModuleComboBox.Items.Clear();
@@ -111,7 +106,7 @@ namespace SECCCU
         private void uiCreateReportButton_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
-            foreach (string singleLog in monitorSystem.Database.GetReport(uiProgrammeComboBox.Text, uiModuleComboBox.Text, uiDateFromPicker.Value.ToString("yyyy-MM-dd"), uiDateToPicker.Value.ToString("yyyy-MM-dd")))
+            foreach (string singleLog in monitorSystem.Database.GetReport(uiProgrammeComboBox.Text, uiModuleComboBox.Text, uiDateFromPicker.Value.ToString("yyyy-MM-dd"), uiDateToPicker.Value.ToString("yyyy-MM-dd"), uiStudentIDTextBox.Text))
             {
                 listBox1.Items.Add(singleLog);
             }
@@ -123,9 +118,6 @@ namespace SECCCU
         }
 
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            listBox1.Items.Add("Date            Time        Class Name      Module code" );
-        }
+
     }
 }                                                                       

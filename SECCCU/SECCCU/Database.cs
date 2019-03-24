@@ -394,8 +394,23 @@ namespace SECCCU
             return programmes;
         }
 
-        public List<string> GetReport(string programmeID, string module, string dateFrom, string dateTo)
+        public List<string> GetReport(string programmeID, string module, string dateFrom, string dateTo, string studentID)
         {
+            bool studentExists = false;
+            Connection.Open();
+            using (SQLiteCommand command = new SQLiteCommand(
+                $@"SELECT * FROM students WHERE student_id = '{studentID}'", Connection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        studentExists = true;
+                    }
+                }
+                Connection.Close();
+            }
+
             StringBuilder sb = new StringBuilder();
             StringBuilder csvBuilder = new StringBuilder();
             List<string> report = new List<string>();
@@ -403,6 +418,10 @@ namespace SECCCU
             sb.Append(" FROM students, scanners, programmes, lectures, rooms");
             sb.Append(" WHERE students.programme_id = programmes.programme_id  ");
             sb.Append(" AND programmes.programme_id = lectures.programme_id  ");
+            if (studentExists)
+            {
+                sb.Append($" AND '{studentID}' = students.student_id  ");
+            }
             sb.Append(programmeID == "*"
                 ? $" AND programmes.programme_name IS NOT NULL "
                 : $" AND programmes.programme_name = '{programmeID}' ");
@@ -416,7 +435,10 @@ namespace SECCCU
             sb.Append(" FROM students, log, scanners, programmes, lectures, rooms");
             sb.Append(" WHERE ");
             sb.Append(" students.student_id = log.student_id");
-            sb.Append(" AND log.scanner_id = scanners.scanner_id");
+            if (studentExists)
+            {
+                sb.Append($" AND '{studentID}' = students.student_id  ");
+            }sb.Append(" AND log.scanner_id = scanners.scanner_id");
             sb.Append(" AND students.programme_id = programmes.programme_id");
             sb.Append(" AND programmes.programme_id = lectures.programme_id  ");
             sb.Append(" AND lectures.room_id = rooms.room_id  ");
@@ -490,6 +512,10 @@ namespace SECCCU
             sb.Append(" WHERE ");
             sb.Append(" students.student_id = log.student_id");
             sb.Append(" AND log.scanner_id = scanners.scanner_id");
+            if (studentExists)
+            {
+                sb.Append($" AND '{studentID}' = students.student_id  ");
+            }
             sb.Append(" AND students.programme_id = programmes.programme_id");
             sb.Append(" AND programmes.programme_id = lectures.programme_id  ");
             sb.Append(" AND lectures.room_id = rooms.room_id  ");
