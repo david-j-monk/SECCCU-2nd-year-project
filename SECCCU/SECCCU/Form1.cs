@@ -121,5 +121,11 @@ namespace SECCCU
                 listBox1.Items.Add("No classes found. Please expand search criteria");
             }
         }
+
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            listBox1.Items.Add("Date            Time        Class Name      Module code" );
+        }
     }
-}
+}                                                                       
