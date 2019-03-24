@@ -24,7 +24,7 @@ namespace SECCCU
             foreach (string programmeTitle in monitorSystem.Database.GetProgrammeTitles())
             {
                 uiProgrammeComboBox.Items.Add(programmeTitle);
-                comboBox1.Items.Add(programmeTitle);
+                uiProgrammePicker.Items.Add(programmeTitle);
             }
         }
 
@@ -70,7 +70,7 @@ namespace SECCCU
                 }
             }
         }
-        
+
         private void uiProgrammeComboBox_indexChanged(object sender, EventArgs e)
         {
             uiModuleComboBox.Items.Clear();
@@ -83,7 +83,7 @@ namespace SECCCU
 
         private void uiEmailReportButton_Click(object sender, EventArgs e)
         {
-            string email = textBox3.Text;
+            string email = uiEmailTextBox.Text;
             if (RegexUtils.IsValidEmail(email))
             {
                 Report report = new Report();
@@ -115,9 +115,42 @@ namespace SECCCU
             {
                 listBox1.Items.Add("No classes found. Please expand search criteria");
             }
+            else
+            {
+                var report = new Report();
+                uiAttendanceAvgLabel.Text = $"Attendance: {report.GetAttendancePercentage()}%";
+
+            }
+
+
         }
 
+        private void uiAddStudentButton_Click(object sender, EventArgs e)
+        {
+
+            if (uiFirstNameTextBox.Text.Length > 2 && uiSurnameTextBox.Text.Length > 2 &&
+                RegexUtils.ValidatePhoneNumber(uiPhoneNumberTextBox.Text) && uiProgrammePicker.Text != "")
+            {
+                string studentID = monitorSystem.Database.AddStudent(uiFirstNameTextBox.Text, uiSurnameTextBox.Text,
+                    uiPhoneNumberTextBox.Text,
+                    uiProgrammePicker.Text);
 
 
+                if (studentID != "False")
+                {
+                    MessageBox.Show($"Student Added\nID Number: {studentID} ", "Success");
+                }
+                else
+                {
+                    MessageBox.Show($"Student not added ", "Error");
+
+                }
+            }
+
+            else
+            {
+                MessageBox.Show("Invalid Details. Please try again", "Error");
+            }
+        }
     }
-}                                                                       
+}

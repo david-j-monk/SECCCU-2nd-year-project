@@ -81,7 +81,7 @@ namespace SECCCU
 
             Debug.WriteLine("CODE: CREATE TABLE rooms");
             sqlCommand = @"CREATE TABLE rooms(
-            room_id 	    int             IDENTITY(1,1)   PRIMARY KEY,
+            room_id 	    INTEGER         PRIMARY KEY,
             room_name 		varchar (5) 	UNIQUE NOT NULL
             )";
 
@@ -90,7 +90,7 @@ namespace SECCCU
 
             Debug.WriteLine("CODE: CREATE TABLE scanners");
             sqlCommand = @"CREATE TABLE scanners(
-            scanner_id 	    int             IDENTITY(1,1)   PRIMARY KEY,
+            scanner_id 	    INTEGER         PRIMARY KEY,
             room_id 		int,
             FOREIGN KEY     (room_id)       REFERENCES      rooms(room_id)
             )";
@@ -101,7 +101,7 @@ namespace SECCCU
 
             Debug.WriteLine("CODE: CREATE TABLE lectures");
             sqlCommand = @"CREATE TABLE lectures(
-            lecture_id 	    int	IDENTITY(1,1) PRIMARY KEY,
+            lecture_id 	    INTEGER         PRIMARY KEY,
             lecture_name	varchar(40),
             lecture_start   datetime2		NOT NULL,
             lecture_end	    datetime2		NOT NULL,
@@ -120,12 +120,13 @@ namespace SECCCU
 
             Debug.WriteLine("CODE: CREATE TABLE students");
             sqlCommand = @"CREATE TABLE students(
-            student_id	    char(12)        PRIMARY KEY,
+            row_id          INTEGER         PRIMARY KEY     AUTOINCREMENT,
+            student_id	    char(12)        UNIQUE,
             surname	        varchar(40)	    NOT NULL,
             first_name      varchar(40)	    NOT NULL,
             phone_number    varchar(13),
             programme_id	char(9),
-            FOREIGN KEY     (programme_id)  REFERENCES      programmes(programme_id),
+            FOREIGN KEY     (programme_id)                  REFERENCES      programmes(programme_id),
             CONSTRAINT      CK_first_name_Length            CHECK           (LENGTH(first_name) >= 3),
             CONSTRAINT      CK_surname_Length               CHECK           (LENGTH(surname) >= 3)
             );";
@@ -268,6 +269,63 @@ namespace SECCCU
             }
         }
 
+        public string AddStudent(string first, string surname, string phone, string programme)
+        {
+            int lastID = 0;
+            string programmeID = "";
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand("SELECT row_id from students order by ROWID DESC limit 1", Connection))
+                {
+                    Connection.Open();
+                    SQLiteDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        lastID = dataReader.GetInt32(0) + 1;
+
+                    }
+                    Connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return "False";
+            }
+
+            try
+            {
+
+                using (SQLiteCommand command = new SQLiteCommand($"SELECT programme_id from programmes WHERE programme_name = '{programme}' limit 1", Connection))
+                {
+                    Connection.Open();
+                    SQLiteDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        programmeID = dataReader.GetString(0);
+                    }
+                    Connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return "False";
+            }
+            string student_id =
+                String.Format($"{surname.Substring(0, 3).ToUpper()}{first.Substring(0, 3).ToUpper()}{lastID:D6}");
+
+            if (SendQueryToDatabase(String.Format($"INSERT INTO students (surname, first_name, student_id, programme_id, phone_number) VALUES ('{surname}', '{first}', '{student_id}', '{programmeID}', '{phone}');")))
+            {
+                return student_id;
+            }
+            else
+            {
+                
+                return "False";
+            }
+
+        }
 
         public string[] LogCardSwipe(string cardNumber)
         {
@@ -438,7 +496,8 @@ namespace SECCCU
             if (studentExists)
             {
                 sb.Append($" AND '{studentID}' = students.student_id  ");
-            }sb.Append(" AND log.scanner_id = scanners.scanner_id");
+            }
+            sb.Append(" AND log.scanner_id = scanners.scanner_id");
             sb.Append(" AND students.programme_id = programmes.programme_id");
             sb.Append(" AND programmes.programme_id = lectures.programme_id  ");
             sb.Append(" AND lectures.room_id = rooms.room_id  ");
@@ -466,7 +525,7 @@ namespace SECCCU
                         {
                             if (firstLine)
                             {
-                                report.Add(String.Format("Non-Attendees"));
+                                report.Add(String.Format("Non-Attending"));
                                 csvBuilder.AppendLine(String.Format("Date Time,Student ID,Programme,Module,Surname,First Name,Attended?"));
                                 firstLine = false;
 
@@ -541,7 +600,7 @@ namespace SECCCU
                         {
                             if (firstLine)
                             {
-                                report.Add(String.Format($"{reader.GetString(3)} Attendees"));
+                                report.Add(String.Format($"Attended"));
                                 firstLine = false;
 
                             }

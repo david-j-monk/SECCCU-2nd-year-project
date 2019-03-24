@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
 using System.Net;
 using System.Net.Configuration;
 using System.Net.Mail;
@@ -15,9 +17,31 @@ namespace SECCCU
 {
     public class Report
     {
-        public void StudentReport(string cardNumber)
+        public double GetAttendancePercentage()
         {
+            List<string> list = new List<string>();
+            using (var reader = new StreamReader(@"csvFiles\\report.csv"))
+            {
 
+                bool firstLine = true;
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
+
+                    if (firstLine)
+                    {
+                        firstLine = false;
+                        continue;
+                    }
+
+                    list.Add(values[6]);
+                }
+            }
+            int numberOfResults = list.Count();
+            int numberOfAttendance = list.Count(str => str.Contains("Yes"));
+            double percentage = numberOfAttendance / numberOfResults * 100;
+            return percentage;
         }
 
         public void SendSignInText(string phoneNumber, string name)

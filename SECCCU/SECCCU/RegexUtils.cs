@@ -4,6 +4,10 @@ using System.Text.RegularExpressions;
 
 public class RegexUtils
 {
+    public static bool ValidatePhoneNumber(string number)
+    {
+        return Regex.Match(number, @"^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$", RegexOptions.IgnoreCase).Success;
+    }
     public static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))

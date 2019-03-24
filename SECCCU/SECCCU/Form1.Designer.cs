@@ -44,17 +44,20 @@
             this.uiDateToPicker = new System.Windows.Forms.DateTimePicker();
             this.uiDateFromDatepicker = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.uiFirstNameTextBox = new System.Windows.Forms.TextBox();
+            this.uiProgrammePicker = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.uiSurnameTextBox = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.uiAddStudentButton = new System.Windows.Forms.Button();
             this.uiEmailReportButton = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.uiEmailTextBox = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.uiPhoneNumberTextBox = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.uiAttendanceAvgLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -106,6 +109,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.uiAttendanceAvgLabel);
             this.groupBox1.Controls.Add(this.listBox1);
             this.groupBox1.Location = new System.Drawing.Point(150, 12);
             this.groupBox1.Name = "groupBox1";
@@ -118,7 +122,7 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(7, 18);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(742, 472);
+            this.listBox1.Size = new System.Drawing.Size(742, 420);
             this.listBox1.TabIndex = 0;
             // 
             // label2
@@ -200,26 +204,26 @@
             this.label4.TabIndex = 16;
             this.label4.Text = "Date To";
             // 
-            // textBox1
+            // uiFirstNameTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(930, 59);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(132, 20);
-            this.textBox1.TabIndex = 3;
+            this.uiFirstNameTextBox.Location = new System.Drawing.Point(930, 59);
+            this.uiFirstNameTextBox.Name = "uiFirstNameTextBox";
+            this.uiFirstNameTextBox.Size = new System.Drawing.Size(132, 20);
+            this.uiFirstNameTextBox.TabIndex = 3;
             // 
-            // comboBox1
+            // uiProgrammePicker
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(930, 160);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(132, 21);
-            this.comboBox1.TabIndex = 10;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.uiProgrammeComboBox_indexChanged);
+            this.uiProgrammePicker.FormattingEnabled = true;
+            this.uiProgrammePicker.Location = new System.Drawing.Point(930, 197);
+            this.uiProgrammePicker.Name = "uiProgrammePicker";
+            this.uiProgrammePicker.Size = new System.Drawing.Size(132, 21);
+            this.uiProgrammePicker.TabIndex = 10;
+            this.uiProgrammePicker.SelectedIndexChanged += new System.EventHandler(this.uiProgrammeComboBox_indexChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(958, 140);
+            this.label5.Location = new System.Drawing.Point(966, 181);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(60, 13);
             this.label5.TabIndex = 8;
@@ -228,7 +232,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(958, 43);
+            this.label6.Location = new System.Drawing.Point(969, 42);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(57, 13);
             this.label6.TabIndex = 4;
@@ -243,17 +247,17 @@
             this.label7.TabIndex = 4;
             this.label7.Text = "Add student";
             // 
-            // textBox2
+            // uiSurnameTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(930, 104);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(132, 20);
-            this.textBox2.TabIndex = 3;
+            this.uiSurnameTextBox.Location = new System.Drawing.Point(930, 104);
+            this.uiSurnameTextBox.Name = "uiSurnameTextBox";
+            this.uiSurnameTextBox.Size = new System.Drawing.Size(132, 20);
+            this.uiSurnameTextBox.TabIndex = 3;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(958, 88);
+            this.label8.Location = new System.Drawing.Point(969, 88);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(49, 13);
             this.label8.TabIndex = 4;
@@ -261,12 +265,13 @@
             // 
             // uiAddStudentButton
             // 
-            this.uiAddStudentButton.Location = new System.Drawing.Point(930, 202);
+            this.uiAddStudentButton.Location = new System.Drawing.Point(930, 239);
             this.uiAddStudentButton.Name = "uiAddStudentButton";
             this.uiAddStudentButton.Size = new System.Drawing.Size(132, 35);
             this.uiAddStudentButton.TabIndex = 6;
             this.uiAddStudentButton.Text = "Add student";
             this.uiAddStudentButton.UseVisualStyleBackColor = true;
+            this.uiAddStudentButton.Click += new System.EventHandler(this.uiAddStudentButton_Click);
             // 
             // uiEmailReportButton
             // 
@@ -278,12 +283,12 @@
             this.uiEmailReportButton.UseVisualStyleBackColor = true;
             this.uiEmailReportButton.Click += new System.EventHandler(this.uiEmailReportButton_Click);
             // 
-            // textBox3
+            // uiEmailTextBox
             // 
-            this.textBox3.Location = new System.Drawing.Point(930, 441);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(132, 20);
-            this.textBox3.TabIndex = 3;
+            this.uiEmailTextBox.Location = new System.Drawing.Point(930, 441);
+            this.uiEmailTextBox.Name = "uiEmailTextBox";
+            this.uiEmailTextBox.Size = new System.Drawing.Size(132, 20);
+            this.uiEmailTextBox.TabIndex = 3;
             // 
             // label9
             // 
@@ -293,6 +298,31 @@
             this.label9.Size = new System.Drawing.Size(75, 13);
             this.label9.TabIndex = 8;
             this.label9.Text = "E-mail address";
+            // 
+            // uiPhoneNumberTextBox
+            // 
+            this.uiPhoneNumberTextBox.Location = new System.Drawing.Point(930, 150);
+            this.uiPhoneNumberTextBox.Name = "uiPhoneNumberTextBox";
+            this.uiPhoneNumberTextBox.Size = new System.Drawing.Size(132, 20);
+            this.uiPhoneNumberTextBox.TabIndex = 3;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(958, 134);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(78, 13);
+            this.label10.TabIndex = 4;
+            this.label10.Text = "Phone Number";
+            // 
+            // uiAttendanceAvgLabel
+            // 
+            this.uiAttendanceAvgLabel.AutoSize = true;
+            this.uiAttendanceAvgLabel.Font = new System.Drawing.Font("MS Reference Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiAttendanceAvgLabel.Location = new System.Drawing.Point(141, 455);
+            this.uiAttendanceAvgLabel.Name = "uiAttendanceAvgLabel";
+            this.uiAttendanceAvgLabel.Size = new System.Drawing.Size(0, 26);
+            this.uiAttendanceAvgLabel.TabIndex = 1;
             // 
             // Form1
             // 
@@ -305,7 +335,7 @@
             this.Controls.Add(this.uiDateFromPicker);
             this.Controls.Add(this.uiModuleComboBox);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.uiProgrammePicker);
             this.Controls.Add(this.uiProgrammeComboBox);
             this.Controls.Add(this.uiCreateReportButton);
             this.Controls.Add(this.label9);
@@ -315,12 +345,14 @@
             this.Controls.Add(this.uiAddStudentButton);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label7);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.uiEmailTextBox);
+            this.Controls.Add(this.uiPhoneNumberTextBox);
+            this.Controls.Add(this.uiSurnameTextBox);
+            this.Controls.Add(this.uiFirstNameTextBox);
             this.Controls.Add(this.uiStudentIDTextBox);
             this.Controls.Add(this.uiCheckLoginStatusButton);
             this.Controls.Add(this.uiCardNumberLabel);
@@ -328,6 +360,7 @@
             this.Name = "Form1";
             this.Text = "SECCCU Dev Test Form";
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -351,17 +384,20 @@
         private System.Windows.Forms.DateTimePicker uiDateToPicker;
         private System.Windows.Forms.Label uiDateFromDatepicker;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox uiFirstNameTextBox;
+        private System.Windows.Forms.ComboBox uiProgrammePicker;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox uiSurnameTextBox;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button uiAddStudentButton;
         private System.Windows.Forms.Button uiEmailReportButton;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox uiEmailTextBox;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox uiPhoneNumberTextBox;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label uiAttendanceAvgLabel;
     }
 }
 

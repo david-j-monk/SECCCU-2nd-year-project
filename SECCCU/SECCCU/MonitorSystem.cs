@@ -5,7 +5,6 @@ namespace SECCCU
     public class MonitorSystem
     {
         public Database Database { get; set; }
-        public Report Report { get; set; }
         public MonitorSystem()
         {
             Database = new Database();
