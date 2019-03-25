@@ -88,6 +88,10 @@ namespace SECCCU
                     sC.EnableSsl = true;
                     //Send an email
                     sC.Send(mM);
+                    foreach (Attachment attachment in mM.Attachments)
+                    {
+                        attachment.Dispose();
+                    }
                     return true;
                 }//end of try block
                 catch (Exception ex)
