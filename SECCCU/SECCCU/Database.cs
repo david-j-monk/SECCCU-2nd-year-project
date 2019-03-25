@@ -48,6 +48,7 @@ namespace SECCCU
 
             Debug.WriteLine("CODE: Dropping tables");
             string sqlCommand = @"
+            PRAGMA foreign_keys = ON;
             DROP TABLE IF EXISTS LOG;
             DROP TABLE IF EXISTS LECTURES;
             DROP TABLE IF EXISTS LECTURERS;
@@ -141,7 +142,7 @@ namespace SECCCU
             scan_time	    datetime		NOT NULL,
             scanner_id	    int,
             FOREIGN KEY     (scanner_id)    REFERENCES      scanners(scanner_id),
-            FOREIGN KEY     (student_id)    REFERENCES      students(student_id)
+            CONSTRAINT FK_studentID         FOREIGN KEY     (student_id)    REFERENCES      students(student_id)
             );";
 
             success = SendQueryToDatabase(sqlCommand);
@@ -333,25 +334,51 @@ namespace SECCCU
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO log (student_id, scan_time, scanner_id)");
             sb.Append($"VALUES ('{cardNumber}', datetime('now'),1);");
+            bool cardNumberExists = false;
             try
             {
-                using (SQLiteCommand command = new SQLiteCommand(sb.ToString(), Connection))
+                using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM students WHERE student_id = '{cardNumber}'", Connection))
                 {
                     Debug.WriteLine("CODE: Executing command");
                     Connection.Open();
-                    command.ExecuteNonQuery();
-                }
-
-                using (SQLiteCommand command = new SQLiteCommand($"SELECT first_name, surname, phone_number FROM students WHERE student_id = '{cardNumber}';", Connection))
-                {
                     SQLiteDataReader dataReader = command.ExecuteReader();
                     while (dataReader.Read())
                     {
-                        returnString[0] = string.Format($"{dataReader.GetString(0)} {dataReader.GetString(1)}");
+                        cardNumberExists = true;
+                    }
+
+                    if (!cardNumberExists)
+                    {
+                        returnString[0] = "Card Read Error";
+                        returnString[1] = "Error";
+                    }
+                  Connection.Close();
+                }
+
+                if (cardNumberExists)
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(sb.ToString(), Connection))
+                    {
+                        Debug.WriteLine("CODE: Executing command");
+                        Connection.Open();
+                        command.ExecuteNonQuery();
+                        Connection.Close();
+                    }
+                }
+
+
+
+                using (SQLiteCommand command = new SQLiteCommand($"SELECT first_name, surname, phone_number FROM students WHERE student_id = '{cardNumber}';", Connection))
+                {
+                    Connection.Open();
+                    SQLiteDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        returnString[0] = String.Format($"{dataReader.GetString(0)} {dataReader.GetString(1)}");
                         returnString[1] = "Swipe Success";
                         returnString[2] = dataReader.GetString(2);
-
                     }
+                    Connection.Close();
                 }
             }
             catch (SQLiteException exception)
@@ -361,7 +388,7 @@ namespace SECCCU
                 Console.WriteLine(exception);
             }
 
-            Connection.Close();
+
             return returnString;
         }
 

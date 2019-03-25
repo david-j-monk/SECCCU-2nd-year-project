@@ -41,6 +41,7 @@ namespace SECCCU
             int numberOfResults = list.Count();
             int numberOfAttendance = list.Count(str => str.Contains("Yes"));
             double percentage = numberOfAttendance / numberOfResults * 100;
+            percentage = Math.Round(percentage, 2);
             return percentage;
         }
 
